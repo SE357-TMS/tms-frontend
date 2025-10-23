@@ -1,0 +1,32 @@
+/* Public Layout (Login/Register) */
+.public-layout {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Dashboard Layout */
+.dashboard-layout {
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+}
+
+.layout-main {
+  margin-left: 240px;
+  min-height: 100vh;
+}
+
+.main-content {
+  padding: calc(70px + var(--spacing-xl)) var(--spacing-xl) var(--spacing-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .layout-main {
+    margin-left: 70px;
+  }
+
+  .main-content {
+    padding: calc(70px + var(--spacing-md)) var(--spacing-md) var(--spacing-md);
+  }
+}

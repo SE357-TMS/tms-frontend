@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useTravelQuery } from '../hooks/useTravelsQuery';
-import Layout from '../components/layout/Layout';
-import Button from '../components/common/Button';
-import { TRAVEL_STATUS_LABELS, TRAVEL_TYPE_LABELS } from '../constants';
+import { useTravelQuery } from '../../hooks/useTravelsQuery';
+import Layout from '../../components/layout/Layout';
+import Button from '../../components/common/Button';
+import { TRAVEL_STATUS_LABELS, TRAVEL_TYPE_LABELS } from '../../constants';
 import './TravelDetailPage.css';
 
 const TravelDetailPage = () => {

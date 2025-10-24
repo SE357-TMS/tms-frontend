@@ -1,14 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import HomePage from '../pages/HomePage';
-import DashboardPage from '../pages/DashboardPage';
-import LoginPage from '../pages/LoginPage';
-import RegisterPage from '../pages/RegisterPage';
-import TravelsPage from '../pages/TravelsPage';
-import TravelsPageWithQuery from '../pages/TravelsPageWithQuery';
-import TravelDetailPage from '../pages/TravelDetailPage';
-import ProtectedRoute from './ProtectedRoute';
+import HomePage from '../pages/HomePage/index.jsx';
+import DashboardPage from '../pages/DashboardPage/index.jsx';
+import LoginPage from '../pages/LoginPage/index.jsx';
+import RegisterPage from '../pages/RegisterPage/index.jsx';
+import TravelsPage from '../pages/TravelsPage/index.jsx';
+import TravelsPageWithQuery from '../pages/TravelsPageWithQuery/index.jsx';
+import TravelDetailPage from '../pages/TravelDetailPage/index.jsx';
 import PublicRoute from './PublicRoute';
+import ProtectedRoute from './PublicRoute';
 
 // Định nghĩa routes
 export const router = createBrowserRouter([
@@ -35,33 +35,33 @@ export const router = createBrowserRouter([
   {
     path: '/dashboard',
     element: (
-      <ProtectedRoute>
+      <PublicRoute>
         <DashboardPage />
-      </ProtectedRoute>
+      </PublicRoute>
     ),
   },
   {
     path: '/travels',
     element: (
-      <ProtectedRoute>
+      <PublicRoute>
         <TravelsPage />
-      </ProtectedRoute>
+      </PublicRoute>
     ),
   },
   {
     path: '/travels/:id',
     element: (
-      <ProtectedRoute>
+      <PublicRoute>
         <TravelDetailPage />
-      </ProtectedRoute>
+      </PublicRoute>
     ),
   },
   {
     path: '/travels-query',
     element: (
-      <ProtectedRoute>
+      <PublicRoute>
         <TravelsPageWithQuery />
-      </ProtectedRoute>
+      </PublicRoute>
     ),
   },
   {

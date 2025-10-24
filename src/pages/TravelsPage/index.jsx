@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTravels } from '../hooks/useTravels';
-import Layout from '../components/layout/Layout';
-import Button from '../components/common/Button';
+import { useTravels } from '../../hooks/useTravels';
+import Layout from '../../components/layout/Layout';
+import Button from '../../components/common/Button';
 import './TravelsPage.css';
 
 const TravelsPage = () => {

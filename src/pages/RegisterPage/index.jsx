@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import Layout from '../components/layout/Layout';
-import Input from '../components/common/Input';
-import Button from '../components/common/Button';
-import './LoginPage.css';
+import { useAuth } from '../../hooks/useAuth';
+import Layout from '../../components/layout/Layout';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+import '../LoginPage/LoginPage.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({

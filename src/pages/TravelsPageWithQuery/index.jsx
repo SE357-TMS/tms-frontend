@@ -1,10 +1,10 @@
 // Ví dụ sử dụng TanStack Query với TravelsPage
 
 import React from 'react';
-import { useTravelsQuery, useCreateTravel, useDeleteTravel } from '../hooks/useTravelsQuery';
-import Layout from '../components/layout/Layout';
-import Button from '../components/common/Button';
-import './TravelsPage.css';
+import { useTravelsQuery, useCreateTravel, useDeleteTravel } from '../../hooks/useTravelsQuery';
+import Layout from '../../components/layout/Layout';
+import Button from '../../components/common/Button';
+import '../TravelsPage/TravelsPage.css';
 
 const TravelsPageWithQuery = () => {
   // Sử dụng React Query thay vì custom hook

@@ -1,358 +1,485 @@
-.dashboard-page {
-  min-height: 100vh;
+/* Dashboard Main Layout */
+.home-main-grid {
+  display: flex;
+  gap: 24px;
+  padding: 0;
+  font-family: "Inter", Arial, sans-serif;
 }
 
-.dashboard-header {
-  margin-bottom: var(--spacing-xl);
+.home-left {
+  flex: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.dashboard-header h1 {
-  font-size: 2rem;
+.home-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Card Styles */
+.home-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(77, 64, 202, 0.08);
+  padding: 24px;
+  transition: box-shadow 0.2s ease;
+}
+
+.home-card:hover {
+  box-shadow: 0 4px 12px rgba(77, 64, 202, 0.12);
+}
+
+.home-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.5rem 0;
 }
 
-.subtitle {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  margin: 0;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-}
-
-.stat-card {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+/* Favorite Routes */
+.home-fav-routes .fav-routes-list {
   display: flex;
-  gap: var(--spacing-md);
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
+.fav-route-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
+  background: #fafbfc;
+  border-radius: 12px;
+  padding: 16px;
+  gap: 16px;
+  border: 1px solid #f0f0f5;
+  transition: all 0.2s ease;
+}
+
+.fav-route-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(77, 64, 202, 0.1);
+  transform: translateY(-2px);
+}
+
+.fav-route-item > img {
+  width: 120px;
+  height: 100px;
+  border-radius: 10px;
+  object-fit: cover;
   flex-shrink: 0;
 }
 
-.stat-icon.blue { background-color: #dbeafe; }
-.stat-icon.green { background-color: #d1fae5; }
-.stat-icon.purple { background-color: #e0e7ff; }
-.stat-icon.orange { background-color: #fed7aa; }
-
-.stat-info h3 {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin: 0 0 0.5rem 0;
+.fav-route-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.stat-value {
-  font-size: 1.75rem;
+.fav-route-location {
+  font-size: 13px;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fav-route-name {
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
 }
 
-.stat-change {
-  font-size: 0.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
+.fav-route-duration,
+.fav-route-start-date,
+.fav-route-price {
+  font-size: 14px;
+  color: var(--text-secondary);
 }
 
-.stat-change.positive { color: var(--success-color); }
-
-/* Dashboard Content */
-.dashboard-content {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-xl);
-}
-
-.dashboard-card {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-}
-
-.card-header h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
+.fav-route-duration b,
+.fav-route-start-date b,
+.fav-route-price b {
   color: var(--text-primary);
-  margin: 0;
+  font-weight: 600;
 }
 
-.month-badge {
-  background-color: var(--bg-secondary);
-  padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.btn-see-more {
-  background: none;
+.fav-route-detail-btn {
+  background: var(--primary-color);
+  color: white;
   border: none;
-  color: var(--primary-color);
-  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-/* Routes Grid */
-.routes-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-lg);
+.fav-route-detail-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(77, 64, 202, 0.2);
+}
+/* Recent Tickets Table */
+.home-recent-tickets .table-container {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #f0f0f5;
 }
 
-.route-card {
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: transform 0.2s ease;
-}
-
-.route-card:hover {
-  transform: translateY(-2px);
-}
-
-.route-card img {
+.home-recent-tickets table {
   width: 100%;
-  height: 150px;
+  border-collapse: collapse;
+  background: white;
+}
+
+.home-recent-tickets thead {
+  background: #f8f9fa;
+  border-bottom: 2px solid #f0f0f5;
+}
+
+.home-recent-tickets th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.home-recent-tickets th:first-child {
+  width: 80px;
+}
+
+.home-recent-tickets td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f5;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.home-recent-tickets tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.home-recent-tickets tbody tr:hover {
+  background: #fafbfc;
+}
+
+.recent-ticket-img {
+  width: 60px;
+  height: 50px;
+  border-radius: 8px;
   object-fit: cover;
 }
 
-.route-info {
-  padding: var(--spacing-md);
-}
-
-.route-tag {
+.ticket-status {
   display: inline-block;
-  background-color: var(--bg-secondary);
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.route-info h3 {
-  font-size: 0.875rem;
-  margin: 0 0 0.5rem 0;
-  color: var(--text-primary);
-}
-
-.route-details {
-  display: flex;
-  gap: var(--spacing-md);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.75rem;
-}
-
-.route-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.route-price {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--primary-color);
-}
-
-.btn-details {
-  background: none;
-  border: 1px solid var(--border-color);
-  padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.75rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
 }
 
 /* Calendar */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
+.home-calendar {
+  min-height: 420px;
 }
 
-.calendar-day-label {
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  padding: 0.5rem 0;
-}
-
-.calendar-day {
-  aspect-ratio: 1;
+.calendar-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+
+.calendar-header span {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.calendar-icon {
+  position: relative;
+  width: 34px;
+  height: 34px;
   cursor: pointer;
-  font-size: 0.875rem;
 }
 
-.calendar-day:hover {
-  background-color: var(--bg-secondary);
-}
-
-.calendar-day.highlighted {
-  background-color: var(--primary-color);
-  color: white;
+.calendar-month {
+  font-size: 16px;
   font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 16px;
 }
 
-/* Attractions */
-.attractions-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-sm);
-}
-
-.attraction-thumb {
-  aspect-ratio: 4/3;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.attraction-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Table */
-.table-container {
-  overflow-x: auto;
-}
-
-.bookings-table {
+.calendar-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.bookings-table th {
-  text-align: left;
-  padding: var(--spacing-md);
-  color: var(--text-secondary);
+.calendar-table th {
+  padding: 12px 4px;
+  text-align: center;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 0.875rem;
-  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  border-bottom: 2px solid #f0f0f5;
 }
 
-.bookings-table td {
-  padding: var(--spacing-md);
-  border-bottom: 1px solid var(--border-color);
+.calendar-table td {
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 14px;
+  height: 48px;
+  position: relative;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.route-cell {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
+.calendar-table td:not(:empty) {
+  cursor: pointer;
 }
 
-.route-cell img {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  object-fit: cover;
+.calendar-table td:not(:empty):hover {
+  background: #fafbfc;
+  border-radius: 8px;
 }
 
-.status-badge {
+.calendar-day-number {
   display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
-.status-badge.completed {
-  background-color: #d1fae5;
-  color: #065f46;
+.calendar-trip-day {
+  background: var(--sidebar-active-bg);
+  border-radius: 8px;
+  position: relative;
 }
 
-.status-badge.waiting {
-  background-color: #fef3c7;
-  color: #92400e;
+.calendar-trip-day .calendar-day-number {
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
-.status-badge.cancelled {
-  background-color: #fee2e2;
-  color: #991b1b;
+.calendar-trip-day-hover:hover .calendar-trip-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-8px);
 }
 
-.table-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: var(--spacing-lg);
-}
-
-.table-pagination button {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border-color);
-  background: white;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.table-pagination button.active {
-  background-color: var(--primary-color);
+.calendar-trip-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: var(--text-primary);
   color: white;
-  border-color: var(--primary-color);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
 }
 
-@media (max-width: 1200px) {
-  .dashboard-content {
-    grid-template-columns: 1fr;
-  }
+.calendar-trip-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--text-primary);
+}
 
-  .routes-grid {
-    grid-template-columns: 1fr;
+/* Favorite Places Grid */
+.home-fav-places {
+  padding: 0;
+  overflow: hidden;
+}
+
+.fav-places-image-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto repeat(3, 1fr);
+  gap: 12px;
+  height: 100%;
+}
+
+.fav-places-header-section {
+  grid-column: 1 / 5;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px 12px;
+}
+
+.fav-places-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.fav-places-divider {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, #f0f0f5 0%, transparent 100%);
+}
+
+.fav-places-btn-view-all {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.fav-places-btn-view-all:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(77, 64, 202, 0.2);
+}
+
+.fav-place-img-wrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fav-place-img-wrap:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(77, 64, 202, 0.15);
+}
+
+.fav-place-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fav-place-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  padding: 16px 12px 12px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.fav-place-img-wrap:hover .fav-place-overlay {
+  opacity: 1;
+}
+
+.fav-place-overlay span {
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.fav-places-large-square {
+  grid-column: 1 / 3;
+  grid-row: 2 / 4;
+}
+
+.fav-places-small-square-1 {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+}
+
+.fav-places-small-square-2 {
+  grid-column: 3 / 4;
+  grid-row: 3 / 4;
+}
+
+.fav-places-rectangle-vertical {
+  grid-column: 4 / 5;
+  grid-row: 2 / 4;
+}
+
+.fav-places-rectangle-horizontal {
+  grid-column: 1 / 3;
+  grid-row: 4 / 5;
+}
+
+@media (max-width: 1400px) {
+  .home-main-grid {
+    flex-direction: column;
+  }
+  .home-left,
+  .home-right {
+    flex: 1;
   }
 }
 
 @media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .home-card {
+    padding: 16px;
   }
-
-  .dashboard-sidebar {
-    display: grid;
-    gap: var(--spacing-lg);
+  .fav-route-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .fav-route-item > img {
+    width: 100%;
+    height: 180px;
+  }
+  .fav-route-detail-btn {
+    width: 100%;
+  }
+  .fav-places-image-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto repeat(3, 120px);
+  }
+  .fav-places-header-section {
+    grid-column: 1 / 3;
+  }
+  .fav-places-large-square {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+  }
+  .fav-places-small-square-1 {
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+  }
+  .fav-places-small-square-2 {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+  }
+  .fav-places-rectangle-vertical {
+    grid-column: 1 / 2;
+    grid-row: 4 / 5;
+  }
+  .fav-places-rectangle-horizontal {
+    grid-column: 2 / 3;
+    grid-row: 4 / 5;
   }
 }

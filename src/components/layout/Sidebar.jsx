@@ -8,7 +8,8 @@ const Sidebar = () => {
   const menuItems = [
     { icon: '🏠', label: 'Dashboard', path: '/dashboard' },
     { icon: '👥', label: 'Customers', path: '/customers' },
-    { icon: '👔', label: 'Staffs', path: '/staffs' },
+    { icon: '�', label: 'Users', path: '/users' },
+    { icon: '�👔', label: 'Staffs', path: '/staffs' },
     { icon: '🗺️', label: 'Routes', path: '/routes' },
     { icon: '✈️', label: 'Trips', path: '/travels' },
     { icon: '📅', label: 'Bookings', path: '/bookings' },

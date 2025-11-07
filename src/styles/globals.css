@@ -6,20 +6,24 @@
 }
 
 :root {
-  /* Colors from design */
-  --primary-color: #6366f1;
-  --primary-hover: #5558e3;
-  --secondary-color: #64748b;
+  /* Colors from Figma design */
+  --primary-color: #4D40CA;
+  --primary-hover: #6B5DD3;
+  --secondary-color: #4275AF;
+  --accent-color: #0FBF00;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --danger-color: #ef4444;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-disabled: #999999;
   --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
+  --bg-secondary: #F6F6F6;
   --border-color: #e2e8f0;
   --sidebar-bg: #ffffff;
-  --sidebar-hover: #f1f5f9;
+  --sidebar-hover: #E8E4FF;
+  --sidebar-active: #4D40CA;
+  --sidebar-active-bg: #E8E4FF;
   
   /* Spacing */
   --spacing-xs: 0.25rem;

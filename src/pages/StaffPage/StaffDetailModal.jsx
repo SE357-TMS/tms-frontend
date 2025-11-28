@@ -9,8 +9,8 @@ const StaffDetailModal = ({ staff, onClose, onEdit, onToggleLock }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container staff-detail-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" role="dialog" aria-modal="true">
+      <div className="modal-container staff-detail-modal">
         {/* Header */}
         <div className="modal-header">
           <div className="modal-title-wrapper">

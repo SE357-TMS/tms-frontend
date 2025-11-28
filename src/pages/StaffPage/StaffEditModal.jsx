@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import './StaffModal.css';
 import api from '../../lib/httpHandler';
 
@@ -63,19 +64,28 @@ const StaffEditModal = ({ staff, onClose, onSave }) => {
     try {
       setLoading(true);
       await api.put(`/admin/staffs/${staff.id}`, formData);
-      alert('Staff updated successfully');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Staff updated successfully',
+        confirmButtonColor: '#4D40CA'
+      });
       onSave();
     } catch (err) {
       console.error('Error updating staff:', err);
-      alert(err.response?.data?.message || 'Failed to update staff');
+      await Swal.fire({
+        icon: 'error',
+        title: 'Failed to update staff',
+        text: err.response?.data?.message || 'Please try again later.',
+        confirmButtonColor: '#4D40CA'
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-container staff-edit-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" role="dialog" aria-modal="true">
+      <div className="modal-container staff-edit-modal">
         {/* Header */}
         <div className="modal-header">
           <div className="modal-title-wrapper">

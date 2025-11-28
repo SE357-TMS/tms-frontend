@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import './StaffPage.css';
 import api from '../../lib/httpHandler';
 import StaffDetailModal from './StaffDetailModal';
 import StaffEditModal from './StaffEditModal';
 import StaffAddModal from './StaffAddModal';
+import bellIcon from '../../assets/icons/bellring.svg';
+import viewIcon from '../../assets/icons/view.svg';
 
 const StaffPage = () => {
   const [staffList, setStaffList] = useState([]);
@@ -65,23 +68,47 @@ const StaffPage = () => {
       setShowDetailModal(true);
     } catch (err) {
       console.error('Error fetching staff details:', err);
-      alert('Failed to load staff details');
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to load staff details',
+        text: err.response?.data?.message || 'Please try again later.',
+        confirmButtonColor: '#4D40CA'
+      });
     }
   };
 
   // Handle toggle lock
   const handleToggleLock = async (staffId) => {
-    if (!confirm('Are you sure you want to change the lock status of this staff?')) {
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Update lock status?',
+      text: 'This will immediately change the staff account status.',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Yes, update'
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
     
     try {
       await api.patch(`/admin/staffs/${staffId}/toggle-lock`);
       fetchStaffList();
-      alert('Staff lock status updated successfully');
+      Swal.fire({
+        icon: 'success',
+        title: 'Lock status updated',
+        confirmButtonColor: '#4D40CA'
+      });
     } catch (err) {
       console.error('Error toggling lock:', err);
-      alert('Failed to update lock status');
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to update lock status',
+        text: err.response?.data?.message || 'Please try again later.',
+        confirmButtonColor: '#4D40CA'
+      });
     }
   };
 
@@ -100,35 +127,56 @@ const StaffPage = () => {
 
   return (
     <div className="staff-page">
-      {/* Header */}
-      <div className="staff-header">
+      {/* Row 1: Title and User Profile */}
+      <div className="staff-row-1">
         <div className="staff-title">
           <h1>All Staffs</h1>
           <p>Information on all staffs</p>
         </div>
-        <div className="staff-header-actions">
-          <div className="staff-search">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchKeyword}
-              onChange={handleSearch}
-            />
-          </div>
-          <button className="btn-add-staff" onClick={() => setShowAddModal(true)}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            Add New Staff
+        <div className="staff-right-actions">
+          <button className="btn-notification" aria-label="Notifications">
+            <img src={bellIcon} alt="Notifications" />
+            <span className="notification-badge">3</span>
           </button>
+          <div className="user-profile">
+            <div className="user-avatar">
+              <img src="https://i.pravatar.cc/150?img=12" alt="User" />
+            </div>
+            <div className="user-info">
+              <div className="user-name">Đặng Phú Thiện</div>
+              <div className="user-role">Administrator</div>
+            </div>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="staff-table-container">
+      {/* Row 2: Search and Add Button */}
+      <div className="staff-row-2">
+        <div className="staff-search">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchKeyword}
+            onChange={handleSearch}
+          />
+        </div>
+        <button className="btn-add-staff" onClick={() => setShowAddModal(true)}>
+          <svg width="25" height="25" viewBox="0 0 25 25" fill="none">
+            <path d="M12.25 7.25V17.25M7.25 12.25H17.25M7 23.5H17.5C19.6002 23.5 20.6503 23.5 21.4525 23.0913C22.1581 22.7317 22.7317 22.1581 23.0913 21.4525C23.5 20.6503 23.5 19.6002 23.5 17.5V7C23.5 4.8998 23.5 3.8497 23.0913 3.04754C22.7317 2.34193 22.1581 1.76825 21.4525 1.40873C20.6503 1 19.6002 1 17.5 1H7C4.8998 1 3.8497 1 3.04754 1.40873C2.34193 1.76825 1.76825 2.34193 1.40873 3.04754C1 3.8497 1 4.8998 1 7V17.5C1 19.6002 1 20.6503 1.40873 21.4525C1.76825 22.1581 2.34193 22.7317 3.04754 23.0913C3.8497 23.5 4.8998 23.5 7 23.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Add New Staff
+        </button>
+      </div>
+
+      {/* Row 3: Table */}
+      <div className="staff-table-wrapper">
+        <div className="staff-table-container">
         <table className="staff-table">
           <thead>
             <tr>
@@ -184,11 +232,10 @@ const StaffPage = () => {
                     <button 
                       className="btn-view"
                       onClick={() => handleViewDetails(staff.id)}
+                      aria-label="View details"
+                      title="View Details"
                     >
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 12C11.1046 12 12 11.1046 12 10C12 8.89543 11.1046 8 10 8C8.89543 8 8 8.89543 8 10C8 11.1046 8.89543 12 10 12Z" fill="currentColor"/>
-                        <path d="M19 10C17 14 13.5 17 10 17C6.5 17 3 14 1 10C3 6 6.5 3 10 3C13.5 3 17 6 19 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      </svg>
+                      <img src={viewIcon} alt="View" />
                     </button>
                   </td>
                 </tr>
@@ -196,10 +243,10 @@ const StaffPage = () => {
             )}
           </tbody>
         </table>
-      </div>
+        </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
+        {/* Pagination */}
+        {totalPages > 1 && (
         <div className="staff-pagination">
           <button 
             onClick={() => goToPage(0)}
@@ -242,6 +289,7 @@ const StaffPage = () => {
           </button>
         </div>
       )}
+      </div>
 
       {/* Modals */}
       {showDetailModal && selectedStaff && (

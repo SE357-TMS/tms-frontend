@@ -5,6 +5,7 @@ Trang quản lý nhân viên với đầy đủ chức năng CRUD (Create, Read,
 ## Features
 
 ### 1. **Staff List View** (`/staff`)
+
 - Hiển thị danh sách tất cả nhân viên dạng table
 - Các cột: Avatar, Name, Gender, Phone, Email, Status, View
 - Pagination với navigation buttons
@@ -12,6 +13,7 @@ Trang quản lý nhân viên với đầy đủ chức năng CRUD (Create, Read,
 - Filter theo Gender và Lock Status (chưa implement UI)
 
 ### 2. **Staff Detail Modal**
+
 - Xem chi tiết thông tin nhân viên
 - Hiển thị: Avatar, Full Name, Gender, Birthday, Address, Phone, Email, Status
 - Actions:
@@ -19,6 +21,7 @@ Trang quản lý nhân viên với đầy đủ chức năng CRUD (Create, Read,
   - Lock/Unlock: Toggle trạng thái khóa tài khoản
 
 ### 3. **Staff Edit Modal**
+
 - Chỉnh sửa thông tin nhân viên
 - Form fields:
   - Full Name (required)
@@ -31,6 +34,7 @@ Trang quản lý nhân viên với đầy đủ chức năng CRUD (Create, Read,
 - Actions: Cancel, Confirm
 
 ### 4. **Staff Add Modal**
+
 - Thêm nhân viên mới
 - Upload avatar (preview)
 - Account Information:
@@ -49,12 +53,12 @@ Trang quản lý nhân viên với đầy đủ chức năng CRUD (Create, Read,
 ## API Endpoints
 
 ```javascript
-GET    /admin/staffs              // Get staff list with pagination & filters
-GET    /admin/staffs/{staffId}    // Get staff details
-POST   /admin/staffs              // Add new staff
-PUT    /admin/staffs/{staffId}    // Update staff
-PATCH  /admin/staffs/{staffId}/toggle-lock  // Lock/Unlock staff
-DELETE /admin/staffs/{staffId}    // Delete staff permanently (chưa dùng)
+GET / admin / staffs; // Get staff list with pagination & filters
+GET / admin / staffs / { staffId }; // Get staff details
+POST / admin / staffs; // Add new staff
+PUT / admin / staffs / { staffId }; // Update staff
+PATCH / admin / staffs / { staffId } / toggle - lock; // Lock/Unlock staff
+DELETE / admin / staffs / { staffId }; // Delete staff permanently (chưa dùng)
 ```
 
 ## Files Structure

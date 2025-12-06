@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Layout from '../../components/layout/Layout';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import userService from '../../services/userService';
+import { AdminTitleContext } from '../../layouts/adminLayout/AdminLayout/AdminTitleContext';
 import './UsersPage.css';
 
 const UsersPage = () => {
+  const { setTitle, setSubtitle } = useContext(AdminTitleContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,6 +23,12 @@ const UsersPage = () => {
     role: 'USER'
   });
   const [errors, setErrors] = useState({});
+
+  // Set page title
+  useEffect(() => {
+    setTitle('All Customers');
+    setSubtitle('Information on all customers');
+  }, [setTitle, setSubtitle]);
 
   // Fetch users from API
   useEffect(() => {
@@ -193,22 +201,6 @@ const UsersPage = () => {
   return (
     <Layout>
       <div className="users-page">
-        <div className="page-header">
-          <div className="header-content">
-            <h1>All Users</h1>
-            <p className="subtitle">Information on all user accounts</p>
-          </div>
-          <div className="header-actions">
-            <button className="notification-btn" title="Notifications">
-              <span className="icon">🔔</span>
-            </button>
-            <div className="user-profile">
-              <span className="user-avatar">👤</span>
-              <span className="user-name">Đặng Phú Thiện</span>
-            </div>
-          </div>
-        </div>
-
         <div className="content-card">
           <div className="table-header">
             <div className="search-box">

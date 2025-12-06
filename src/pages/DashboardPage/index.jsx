@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DashboardPage.css";
 import CalendarLogo from "../../assets/icons/admin/DashBoard/calendar-heart-01.svg";
 import { fetchGet, BE_ENDPOINT } from "../../lib/httpHandler";
+import { AdminTitleContext } from "../../layouts/adminLayout/AdminLayout/AdminTitleContext";
 
 const statusColor = {
   "Hoàn tất": "#4CAF50",
@@ -63,6 +64,13 @@ function Calendar({ year, month, tripDaysInfo }) {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { setTitle, setSubtitle } = useContext(AdminTitleContext);
+
+  // Set page title
+  useEffect(() => {
+    setTitle('Dashboard');
+    setSubtitle('Overview of your travel business');
+  }, [setTitle, setSubtitle]);
 
   // State
   const [favoriteRoutes, setFavoriteRoutes] = useState([]);

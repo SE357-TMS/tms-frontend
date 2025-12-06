@@ -1,11 +1,23 @@
 import React from 'react';
 import './StaffModal.css';
+import closeIcon from '../../assets/icons/close.svg';
+import modifyIcon from '../../assets/icons/modify.svg';
 
-const StaffDetailModal = ({ staff, onClose, onEdit, onToggleLock }) => {
+const StaffDetailModal = ({ staff, onClose, onEdit }) => {
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB');
+  };
+
+  const getGenderDisplay = (gender) => {
+    if (!gender) return 'N/A';
+    switch (gender.toUpperCase()) {
+      case 'MALE': return 'Male';
+      case 'FEMALE': return 'Female';
+      case 'OTHER': return 'Other';
+      default: return gender;
+    }
   };
 
   return (
@@ -19,11 +31,12 @@ const StaffDetailModal = ({ staff, onClose, onEdit, onToggleLock }) => {
               <path d="M1 19C1 15.134 4.58172 12 9 12H11C15.4183 12 19 15.134 19 19" stroke="currentColor" strokeWidth="2"/>
             </svg>
             <h2>Staff Information</h2>
+            <button className="btn-edit-icon" onClick={onEdit} title="Edit Staff">
+              <img src={modifyIcon} alt="Edit" />
+            </button>
           </div>
           <button className="modal-close-btn" onClick={onClose}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src={closeIcon} alt="Close" />
           </button>
         </div>
 
@@ -50,7 +63,7 @@ const StaffDetailModal = ({ staff, onClose, onEdit, onToggleLock }) => {
             <div className="detail-field-row">
               <div className="detail-field">
                 <label>Gender</label>
-                <p>{staff.gender === 'M' ? 'Male' : staff.gender === 'F' ? 'Female' : 'Other'}</p>
+                <p>{getGenderDisplay(staff.gender)}</p>
               </div>
               <div className="detail-field">
                 <label>Birthday</label>
@@ -80,16 +93,6 @@ const StaffDetailModal = ({ staff, onClose, onEdit, onToggleLock }) => {
               </span>
             </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="modal-footer">
-          <button className="btn-secondary" onClick={onToggleLock}>
-            {staff.isLock ? 'Unlock Account' : 'Lock Account'}
-          </button>
-          <button className="btn-primary" onClick={onEdit}>
-            Edit
-          </button>
         </div>
       </div>
     </div>

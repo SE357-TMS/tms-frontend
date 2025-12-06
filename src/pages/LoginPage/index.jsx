@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import authService from '../../services/authService';
+import { useAuth } from '../../hooks/useAuth';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -10,8 +10,8 @@ const LoginPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,11 +57,10 @@ const LoginPage = () => {
       
       console.log('🔵 Attempting login...', { username: formData.username });
       
-      // Call login API with rememberMe flag
-      const result = await authService.login(formData.username, formData.password, rememberMe);
+      // Call login API through context
+      const result = await login(formData.username, formData.password);
       
       console.log('✅ Login successful!', result);
-      console.log('🔑 Token saved:', authService.getToken());
       
       // Login successful, redirect to dashboard
       navigate('/dashboard');
@@ -159,16 +158,8 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Forgot Password */}
             <div className="form-options">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <span>Remember me</span>
-              </label>
               <Link to="/forgot-password" className="forgot-link">
                 Forgot password?
               </Link>

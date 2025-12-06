@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import './StaffModal.css';
 import api from '../../lib/httpHandler';
+import closeIcon from '../../assets/icons/close.svg';
 
 const StaffAddModal = ({ onClose, onSave }) => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
     fullName: '',
-    gender: 'M',
+    gender: 'MALE',
     birthday: '',
     address: '',
     phoneNumber: '',
@@ -16,7 +17,6 @@ const StaffAddModal = ({ onClose, onSave }) => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [avatarPreview, setAvatarPreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,17 +29,6 @@ const StaffAddModal = ({ onClose, onSave }) => {
         ...prev,
         [name]: ''
       }));
-    }
-  };
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -88,11 +77,19 @@ const StaffAddModal = ({ onClose, onSave }) => {
 
     try {
       setLoading(true);
-      await api.post('/admin/staffs', formData);
+      
+      // Map gender: MALE -> M, FEMALE -> F, OTHER -> O
+      const dataToSend = {
+        ...formData,
+        gender: formData.gender === 'MALE' ? 'M' : formData.gender === 'FEMALE' ? 'F' : 'O'
+      };
+      
+      // Gửi JSON data (backend không support avatar upload qua API này)
+      await api.post('/admin/staffs', dataToSend);
+      
       await Swal.fire({
         icon: 'success',
         title: 'Staff added successfully',
-        text: 'Welcome email has been sent.',
         confirmButtonColor: '#4D40CA'
       });
       onSave();
@@ -121,42 +118,13 @@ const StaffAddModal = ({ onClose, onSave }) => {
             <h2>Add new Staff</h2>
           </div>
           <button className="modal-close-btn" onClick={onClose}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src={closeIcon} alt="Close" />
           </button>
         </div>
 
         {/* Body */}
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
-            {/* Avatar Upload */}
-            <div className="staff-add-avatar">
-              <div className="avatar-upload-wrapper">
-                {avatarPreview ? (
-                  <img src={avatarPreview} alt="Preview" />
-                ) : (
-                  <div className="avatar-upload-placeholder">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <path d="M16 8V24M8 16H24" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  style={{ display: 'none' }}
-                  id="avatar-upload"
-                />
-                <label htmlFor="avatar-upload" className="avatar-upload-btn">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M14 10V14H2V10M11 5L8 2M8 2L5 5M8 2V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </label>
-              </div>
-            </div>
-
             {/* Account Information */}
             <div className="form-section-title">Account Information</div>
             
@@ -210,9 +178,9 @@ const StaffAddModal = ({ onClose, onSave }) => {
                   value={formData.gender}
                   onChange={handleChange}
                 >
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="O">Other</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
                 </select>
               </div>
 

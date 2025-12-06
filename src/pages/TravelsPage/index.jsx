@@ -1,55 +1,59 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useTravels } from '../../hooks/useTravels';
-import Layout from '../../components/layout/Layout';
 import Button from '../../components/common/Button';
+import { AdminTitleContext } from '../../layouts/adminLayout/AdminLayout/AdminTitleContext';
 import './TravelsPage.css';
 
-const TravelsPage = () => {
+const RoutesPage = () => {
   const { travels, loading, error } = useTravels();
+  const { setTitle, setSubtitle } = useContext(AdminTitleContext);
+
+  // Set page title
+  useEffect(() => {
+    setTitle('All Routes');
+    setSubtitle('Information on all travel routes');
+  }, [setTitle, setSubtitle]);
 
   if (loading) {
     return (
-      <Layout>
+      <div className="routes-page">
         <div className="loading">Đang tải...</div>
-      </Layout>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Layout>
+      <div className="routes-page">
         <div className="error">Lỗi: {error}</div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="tasks-page">
-        <div className="tasks-header">
-          <h1>Danh sách tour du lịch</h1>
-          <Button variant="primary">
-            + Thêm tour
-          </Button>
-        </div>
-        <div className="tasks-list">
-          {travels.length === 0 ? (
-            <p>Chưa có tour du lịch nào</p>
-          ) : (
-            travels.map(travel => (
-              <div key={travel.id} className="task-card">
-                <h3>{travel.title}</h3>
-                <p>{travel.description}</p>
-                <span className={`status status-${travel.status}`}>
-                  {travel.status}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
+    <div className="routes-page">
+      <div className="routes-header">
+        <Button variant="primary">
+          + Thêm tuyến đường
+        </Button>
       </div>
-    </Layout>
+      <div className="routes-list">
+        {travels.length === 0 ? (
+          <p>Chưa có tuyến đường nào</p>
+        ) : (
+          travels.map(travel => (
+            <div key={travel.id} className="route-card">
+              <h3>{travel.title}</h3>
+              <p>{travel.description}</p>
+              <span className={`status status-${travel.status}`}>
+                {travel.status}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 };
 
-export default TravelsPage;
+export default RoutesPage;

@@ -1,9 +1,9 @@
 // Ví dụ sử dụng TanStack Query với TravelsPage
 
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useTravelsQuery, useCreateTravel, useDeleteTravel } from '../../hooks/useTravelsQuery';
-import Layout from '../../components/layout/Layout';
 import Button from '../../components/common/Button';
+import { AdminTitleContext } from '../../layouts/adminLayout/AdminLayout/AdminTitleContext';
 import '../TravelsPage/TravelsPage.css';
 
 const TravelsPageWithQuery = () => {
@@ -11,6 +11,13 @@ const TravelsPageWithQuery = () => {
   const { data: travels = [], isLoading, error } = useTravelsQuery();
   const createTravelMutation = useCreateTravel();
   const deleteTravelMutation = useDeleteTravel();
+  const { setTitle, setSubtitle } = useContext(AdminTitleContext);
+
+  // Set page title
+  useEffect(() => {
+    setTitle('All Routes');
+    setSubtitle('Information on all travel routes');
+  }, [setTitle, setSubtitle]);
 
   const handleCreateTravel = async () => {
     try {
@@ -38,60 +45,57 @@ const TravelsPageWithQuery = () => {
 
   if (isLoading) {
     return (
-      <Layout>
+      <div className="travels-page">
         <div className="loading">Đang tải...</div>
-      </Layout>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Layout>
+      <div className="travels-page">
         <div className="error">Lỗi: {error.message}</div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="tasks-page">
-        <div className="tasks-header">
-          <h1>Danh sách tour du lịch</h1>
-          <Button 
-            variant="primary"
-            onClick={handleCreateTravel}
-            loading={createTravelMutation.isPending}
-          >
-            + Thêm tour
-          </Button>
-        </div>
-        <div className="tasks-list">
-          {travels.length === 0 ? (
-            <p>Chưa có tour du lịch nào</p>
-          ) : (
-            travels.map(travel => (
-              <div key={travel.id} className="task-card">
-                <h3>{travel.title}</h3>
-                <p>{travel.description}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className={`status status-${travel.status}`}>
-                    {travel.status}
-                  </span>
-                  <Button 
-                    variant="danger" 
-                    size="small"
-                    onClick={() => handleDeleteTravel(travel.id)}
-                    loading={deleteTravelMutation.isPending}
-                  >
-                    Xóa
-                  </Button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+    <div className="travels-page">
+      <div className="tasks-header">
+        <Button 
+          variant="primary"
+          onClick={handleCreateTravel}
+          loading={createTravelMutation.isPending}
+        >
+          + Thêm tour
+        </Button>
       </div>
-    </Layout>
+      <div className="tasks-list">
+        {travels.length === 0 ? (
+          <p>Chưa có tour du lịch nào</p>
+        ) : (
+          travels.map(travel => (
+            <div key={travel.id} className="task-card">
+              <h3>{travel.title}</h3>
+              <p>{travel.description}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className={`status status-${travel.status}`}>
+                  {travel.status}
+                </span>
+                <Button 
+                  variant="danger" 
+                  size="small"
+                  onClick={() => handleDeleteTravel(travel.id)}
+                  loading={deleteTravelMutation.isPending}
+                >
+                  Xóa
+                </Button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 };
 

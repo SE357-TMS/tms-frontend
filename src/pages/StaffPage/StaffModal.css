@@ -85,16 +85,52 @@
   width: 32px;
   height: 32px;
   border: none;
-  background: transparent;
-  color: var(--text-secondary);
+  background: var(--bg-secondary, #f3f4f6);
+  color: var(--text-primary, #1f2937);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
+.modal-close-btn img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
 .modal-close-btn:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #ef4444;
+}
+
+.modal-close-btn:hover img {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+}
+
+/* Edit Icon Button */
+.btn-edit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--primary-color, #4D40CA);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 12px;
+}
+
+.btn-edit-icon img {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-edit-icon:hover {
+  background: var(--primary-hover, #3d32a8);
+  transform: scale(1.05);
 }
 
 /* Modal Body */

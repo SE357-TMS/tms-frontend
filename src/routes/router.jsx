@@ -10,6 +10,12 @@ import TravelsPageWithQuery from '../pages/TravelsPageWithQuery/index.jsx';
 import TravelDetailPage from '../pages/TravelDetailPage/index.jsx';
 import UsersPage from '../pages/UsersPage/index.jsx';
 import StaffPage from '../pages/StaffPage/index.jsx';
+import CustomersPage from '../pages/CustomersPage/index.jsx';
+import TripsPage from '../pages/TripsPage/index.jsx';
+import BookingsPage from '../pages/BookingsPage/index.jsx';
+import InvoicesPage from '../pages/InvoicesPage/index.jsx';
+import AttractionsPage from '../pages/AttractionsPage/index.jsx';
+import StatisticsPage from '../pages/StatisticsPage/index.jsx';
 import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -47,6 +53,10 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
+        path: '/customers',
+        element: <CustomersPage />,
+      },
+      {
         path: '/staff',
         element: <StaffPage />,
       },
@@ -61,6 +71,26 @@ export const router = createBrowserRouter([
       {
         path: '/travels-query',
         element: <TravelsPageWithQuery />,
+      },
+      {
+        path: '/trips',
+        element: <TripsPage />,
+      },
+      {
+        path: '/bookings',
+        element: <BookingsPage />,
+      },
+      {
+        path: '/invoices',
+        element: <InvoicesPage />,
+      },
+      {
+        path: '/attractions',
+        element: <AttractionsPage />,
+      },
+      {
+        path: '/reports',
+        element: <StatisticsPage />,
       },
       {
         path: '/users',

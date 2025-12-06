@@ -1,3 +1,47 @@
+/* Routes Page */
+.routes-page {
+  padding: 0 24px 24px 24px;
+  background: #f5f5f5;
+  min-height: calc(100vh - 100px);
+}
+
+.routes-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.routes-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.route-card {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.route-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.route-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.route-card p {
+  margin: 0 0 1rem 0;
+  color: #666;
+}
+
+/* Legacy support */
 .tasks-page {
   padding: 1rem;
 }

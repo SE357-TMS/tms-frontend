@@ -2,15 +2,25 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import './StaffModal.css';
 import api from '../../lib/httpHandler';
+import closeIcon from '../../assets/icons/close.svg';
 
 const StaffEditModal = ({ staff, onClose, onSave }) => {
+  // Map gender: M -> MALE, F -> FEMALE, O -> OTHER
+  const mapGenderToFrontend = (gender) => {
+    if (gender === 'M') return 'MALE';
+    if (gender === 'F') return 'FEMALE';
+    if (gender === 'O') return 'OTHER';
+    return 'MALE';
+  };
+  
   const [formData, setFormData] = useState({
     fullName: staff.fullName || '',
-    gender: staff.gender || 'M',
+    gender: mapGenderToFrontend(staff.gender),
     birthday: staff.birthday ? staff.birthday.split('T')[0] : '',
     address: staff.address || '',
     phoneNumber: staff.phoneNumber || '',
     email: staff.email || '',
+    isLock: staff.isLock || false,
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -63,7 +73,16 @@ const StaffEditModal = ({ staff, onClose, onSave }) => {
 
     try {
       setLoading(true);
-      await api.put(`/admin/staffs/${staff.id}`, formData);
+      
+      // Map gender: MALE -> M, FEMALE -> F, OTHER -> O
+      const dataToSend = {
+        ...formData,
+        gender: formData.gender === 'MALE' ? 'M' : formData.gender === 'FEMALE' ? 'F' : 'O'
+      };
+      
+      // Gửi JSON data (backend không support avatar upload qua API này)
+      await api.put(`/admin/staffs/${staff.id}`, dataToSend);
+      
       await Swal.fire({
         icon: 'success',
         title: 'Staff updated successfully',
@@ -95,16 +114,14 @@ const StaffEditModal = ({ staff, onClose, onSave }) => {
             <h2>Edit Staff</h2>
           </div>
           <button className="modal-close-btn" onClick={onClose}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src={closeIcon} alt="Close" />
           </button>
         </div>
 
         {/* Body */}
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
-            {/* Avatar Preview */}
+            {/* Avatar Display */}
             <div className="staff-edit-avatar">
               {staff.avatarUrl ? (
                 <img src={staff.avatarUrl} alt={staff.fullName} />
@@ -137,9 +154,9 @@ const StaffEditModal = ({ staff, onClose, onSave }) => {
                   value={formData.gender}
                   onChange={handleChange}
                 >
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="O">Other</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
                 </select>
               </div>
 
@@ -189,6 +206,18 @@ const StaffEditModal = ({ staff, onClose, onSave }) => {
                 className={errors.email ? 'error' : ''}
               />
               {errors.email && <span className="error-text">{errors.email}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Account Status</label>
+              <select
+                name="isLock"
+                value={formData.isLock}
+                onChange={(e) => setFormData(prev => ({ ...prev, isLock: e.target.value === 'true' }))}
+              >
+                <option value="false">Active</option>
+                <option value="true">Locked</option>
+              </select>
             </div>
           </div>
 

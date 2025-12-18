@@ -1,0 +1,16 @@
+.customer-layout {
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.customer-main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 40px;
+}
+
+@media (max-width: 768px) {
+  .customer-main {
+    padding: 16px 20px;
+  }
+}

@@ -1,16 +1,16 @@
-.customer-layout {
-  min-height: 100vh;
-  background: #ffffff;
+/* Customer Layout Container */
+.customer-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Đảm bảo chiếm 100% */
+  min-height: 100vh; /* Chiều cao tối thiểu bằng màn hình */
+  margin: 0;
+  padding: 0;
 }
 
-.customer-main {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 24px 40px;
-}
-
-@media (max-width: 768px) {
-  .customer-main {
-    padding: 16px 20px;
-  }
+.customer-content {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 100%; /* Thêm dòng này */
 }

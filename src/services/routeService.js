@@ -1,5 +1,7 @@
 import api from '../lib/httpHandler';
 
+const BASE_PATH = '/api/v1/routes';
+
 /**
  * Service for route-related API calls
  */
@@ -11,62 +13,34 @@ const routeService = {
    */
   getRoutes: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `/routes?${queryString}` : '/routes';
+    const url = queryString ? `${BASE_PATH}?${queryString}` : BASE_PATH;
     return api.get(url);
   },
 
   /**
    * Get route detail by ID
-   * @param {number} id - Route ID
+   * @param {string} id - Route ID (UUID)
    * @returns {Promise} API response with route details including itinerary
    */
   getRouteById: async (id) => {
-    return api.get(`/routes/${id}`);
+    return api.get(`${BASE_PATH}/${id}`);
   },
 
   /**
    * Get route detail with full information (for customer view)
-   * @param {number} id - Route ID
+   * @param {string} id - Route ID (UUID)
    * @returns {Promise} API response with complete route details
    */
   getRouteDetail: async (id) => {
-    return api.get(`/routes/${id}/detail`);
+    return api.get(`${BASE_PATH}/${id}/detail`);
   },
 
   /**
-   * Get route images
-   * @param {number} routeId - Route ID
-   * @returns {Promise} Array of image URLs
-   */
-  getRouteImages: async (routeId) => {
-    return api.get(`/images/routes/${routeId}/images`);
-  },
-
-  /**
-   * Search routes
-   * @param {Object} searchParams - Search parameters
+   * Get all routes without pagination
    * @returns {Promise} API response
    */
-  searchRoutes: async (searchParams) => {
-    return api.post('/routes/search', searchParams);
-  },
-
-  /**
-   * Get popular routes
-   * @param {number} limit - Number of routes to return
-   * @returns {Promise} API response
-   */
-  getPopularRoutes: async (limit = 10) => {
-    return api.get(`/routes/popular?limit=${limit}`);
-  },
-
-  /**
-   * Get routes by category
-   * @param {number} categoryId - Category ID
-   * @returns {Promise} API response
-   */
-  getRoutesByCategory: async (categoryId) => {
-    return api.get(`/routes/category/${categoryId}`);
+  getAllRoutes: async () => {
+    return api.get(`${BASE_PATH}/all`);
   }
 };
 

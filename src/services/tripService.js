@@ -1,5 +1,7 @@
 import api from '../lib/httpHandler';
 
+const BASE_PATH = '/api/v1/trips';
+
 /**
  * Service for trip-related API calls
  */
@@ -11,62 +13,43 @@ const tripService = {
    */
   getTrips: async (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `/trips?${queryString}` : '/trips';
+    const url = queryString ? `${BASE_PATH}?${queryString}` : BASE_PATH;
     return api.get(url);
   },
 
   /**
    * Get trip by ID
-   * @param {number} id - Trip ID
+   * @param {string} id - Trip ID (UUID)
    * @returns {Promise} API response
    */
   getTripById: async (id) => {
-    return api.get(`/trips/${id}`);
+    return api.get(`${BASE_PATH}/${id}`);
   },
 
   /**
    * Get available trips for a route (trips at least 3 days in the future)
-   * @param {number} routeId - Route ID
+   * @param {string} routeId - Route ID (UUID)
    * @returns {Promise} API response with available trips
    */
   getAvailableTripsByRoute: async (routeId) => {
-    return api.get(`/trips/route/${routeId}/available`);
-  },
-
-  /**
-   * Get trips by route ID
-   * @param {number} routeId - Route ID
-   * @returns {Promise} API response
-   */
-  getTripsByRoute: async (routeId) => {
-    return api.get(`/trips/route/${routeId}`);
+    return api.get(`${BASE_PATH}/route/${routeId}/available`);
   },
 
   /**
    * Get nearest available trip for a route
-   * @param {number} routeId - Route ID
+   * @param {string} routeId - Route ID (UUID)
    * @returns {Promise} API response with nearest trip
    */
   getNearestTrip: async (routeId) => {
-    return api.get(`/trips/route/${routeId}/nearest`);
+    return api.get(`${BASE_PATH}/route/${routeId}/nearest`);
   },
 
   /**
-   * Get upcoming trips
-   * @param {number} limit - Number of trips to return
+   * Get all trips without pagination
    * @returns {Promise} API response
    */
-  getUpcomingTrips: async (limit = 10) => {
-    return api.get(`/trips/upcoming?limit=${limit}`);
-  },
-
-  /**
-   * Search trips
-   * @param {Object} searchParams - Search parameters
-   * @returns {Promise} API response
-   */
-  searchTrips: async (searchParams) => {
-    return api.post('/trips/search', searchParams);
+  getAllTrips: async () => {
+    return api.get(`${BASE_PATH}/all`);
   }
 };
 

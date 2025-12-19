@@ -1,5 +1,7 @@
 import api from '../lib/httpHandler';
 
+const BASE_PATH = '/api/v1/cart';
+
 /**
  * Service for cart-related API calls
  */
@@ -9,38 +11,36 @@ const cartService = {
    * @returns {Promise} API response with cart data
    */
   getCart: async () => {
-    return api.get('/cart');
+    return api.get(BASE_PATH);
   },
 
   /**
    * Add trip to cart
-   * @param {Object} data - Cart item data
-   * @param {number} data.tripId - Trip ID
-   * @param {number} data.quantity - Number of seats
+   * @param {string} tripId - Trip ID (UUID)
+   * @param {number} quantity - Number of seats
    * @returns {Promise} API response
    */
-  addToCart: async (data) => {
-    return api.post('/cart/items', data);
+  addToCart: async (tripId, quantity) => {
+    return api.post(`${BASE_PATH}/items`, { tripId, quantity });
   },
 
   /**
    * Update cart item quantity
-   * @param {number} cartItemId - Cart item ID
-   * @param {Object} data - Update data
-   * @param {number} data.quantity - New quantity
+   * @param {string} cartItemId - Cart item ID (UUID)
+   * @param {number} quantity - New quantity
    * @returns {Promise} API response
    */
-  updateCartItem: async (cartItemId, data) => {
-    return api.put(`/cart/items/${cartItemId}`, data);
+  updateCartItem: async (cartItemId, quantity) => {
+    return api.put(`${BASE_PATH}/items/${cartItemId}`, { quantity });
   },
 
   /**
    * Remove item from cart
-   * @param {number} cartItemId - Cart item ID
+   * @param {string} cartItemId - Cart item ID (UUID)
    * @returns {Promise} API response
    */
   removeFromCart: async (cartItemId) => {
-    return api.delete(`/cart/items/${cartItemId}`);
+    return api.delete(`${BASE_PATH}/items/${cartItemId}`);
   },
 
   /**
@@ -48,24 +48,38 @@ const cartService = {
    * @returns {Promise} API response
    */
   clearCart: async () => {
-    return api.delete('/cart/clear');
+    return api.delete(`${BASE_PATH}/clear`);
   },
 
   /**
    * Check if a trip is already in the cart
-   * @param {number} tripId - Trip ID
-   * @returns {Promise} API response with boolean
+   * @param {string} tripId - Trip ID (UUID)
+   * @returns {Promise<boolean>} True if trip is in cart
    */
-  checkTripInCart: async (tripId) => {
-    return api.get(`/cart/check/${tripId}`);
+  hasTripInCart: async (tripId) => {
+    try {
+      const cartResponse = await api.get(BASE_PATH);
+      if (cartResponse?.data?.items) {
+        return cartResponse.data.items.some(item => item.tripId === tripId);
+      }
+      return false;
+    } catch (error) {
+      console.error('Error checking cart:', error);
+      return false;
+    }
   },
 
   /**
    * Get cart item count
-   * @returns {Promise} API response with count
+   * @returns {Promise<number>} Number of items in cart
    */
   getCartCount: async () => {
-    return api.get('/cart/count');
+    try {
+      const cartResponse = await api.get(BASE_PATH);
+      return cartResponse?.data?.items?.length || 0;
+    } catch (error) {
+      return 0;
+    }
   }
 };
 

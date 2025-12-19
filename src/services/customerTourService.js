@@ -19,6 +19,13 @@ const customerTourService = {
     return response.data;
   },
 
+  getFavoriteDestinationImages: async (destinationLimit = 8) => {
+    const response = await api.get(`${BASE_PATH}/home/destination-images`, {
+      params: { destinationLimit }
+    });
+    return response.data;
+  },
+
   // Search tours with filters and pagination
   searchTours: async (params) => {
     const response = await api.get(`${BASE_PATH}/search`, { params });

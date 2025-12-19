@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import AdminLayout from '../layouts/adminLayout/AdminLayout/AdminLayout';
 import CustomerLayout from '../layouts/customerLayout/CustomerLayout/CustomerLayout';
-import HomePage from '../pages/HomePage/index.jsx';
+import HomePage from '../pages/HomePage/Home.jsx';
 import DashboardPage from '../pages/DashboardPage/index.jsx';
 import LoginPage from '../pages/LoginPage/index.jsx';
 import RegisterPage from '../pages/RegisterPage/index.jsx';
@@ -11,7 +11,7 @@ import TravelsPageWithQuery from '../pages/TravelsPageWithQuery/index.jsx';
 import TravelDetailPage from '../pages/TravelDetailPage/index.jsx';
 import UsersPage from '../pages/UsersPage/index.jsx';
 import StaffPage from '../pages/StaffPage/index.jsx';
-import CustomersPage from '../pages/CustomersPage/index.jsx';
+// import CustomersPage from '../pages/CustomersPage/index.jsx';
 import TripsPage from '../pages/TripsPage/index.jsx';
 import BookingsPage from '../pages/BookingsPage/index.jsx';
 import InvoicesPage from '../pages/InvoicesPage/index.jsx';
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/customers',
-        element: <CustomersPage />,
+        element: <UsersPage />,
       },
       {
         path: '/staff',

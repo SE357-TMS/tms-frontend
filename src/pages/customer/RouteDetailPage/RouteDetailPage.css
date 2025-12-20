@@ -1,0 +1,875 @@
+/* Route Detail Page Styles */
+.route-detail-page {
+  padding: 30px 0;
+  background-color: #f7f7f7;
+  min-height: 100vh;
+}
+
+.route-detail-page .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Tour Headline */
+.tour-headline {
+  font-family: "Poppins", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 24px;
+}
+
+/* Layout */
+.tour-layout {
+  display: flex;
+  gap: 30px;
+}
+
+.left-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.right-sidebar {
+  width: 380px;
+  flex-shrink: 0;
+}
+
+/* Gallery Container */
+.gallery-container {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #e0e0e0;
+}
+
+.main-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.65s ease, opacity 0.65s ease;
+}
+
+.gallery-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  pointer-events: none;
+}
+
+.gallery-fade.left {
+  left: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.3), transparent);
+}
+
+.gallery-fade.right {
+  right: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.3), transparent);
+}
+
+.gallery-container:hover .main-image {
+  transform: scale(1.02);
+  opacity: 0.95;
+}
+
+.gallery-container .nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.gallery-container .nav-btn:hover {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-container .nav-btn.prev {
+  left: 16px;
+}
+
+.gallery-container .nav-btn.next {
+  right: 16px;
+}
+
+.gallery-container .nav-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.wishlist-btn:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.wishlist-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Itinerary Section */
+.itinerary-section {
+  margin-top: 30px;
+}
+
+.itinerary-slider {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.card-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  transition: all 0.2s ease;
+}
+
+.card-nav:hover:not(:disabled) {
+  background: #f0f0f0;
+  border-color: #ccc;
+}
+
+.card-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.card-nav img {
+  width: 16px;
+  height: 16px;
+}
+
+.itinerary-cards {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.day-card {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 320px;
+}
+
+.day-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+
+.activity-group {
+  margin-top: 14px;
+}
+
+.activity-list {
+  max-height: 240px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-card {
+  background: #f8f8fb;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: inset 0 0 0 1px rgba(77, 64, 202, 0.08);
+  min-height: 70px;
+}
+.activity-card.placeholder {
+  opacity: 0.6;
+}
+
+.activity-name {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.activity-category {
+  display: inline-flex;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 10px;
+  padding: 4px 10px;
+}
+
+/* Booking Widget */
+.booking-widget {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.widget-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.departure-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.calendar-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border 0.2s ease, background 0.2s ease;
+}
+
+.calendar-toggle.active {
+  border-color: var(--primary-blue, #4d40ca);
+  background: rgba(77, 64, 202, 0.08);
+}
+
+.calendar-toggle img {
+  width: 18px;
+  height: 18px;
+}
+
+/* Departure Dates List */
+.departure-dates-list {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.no-trips {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  padding: 10px;
+}
+
+.trip-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trip-date-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trip-date-btn:hover {
+  border-color: var(--primary-blue, #4d40ca);
+  color: var(--primary-blue, #4d40ca);
+}
+
+.trip-date-btn.active {
+  background: var(--primary-blue, #4d40ca);
+  border-color: var(--primary-blue, #4d40ca);
+  color: #fff;
+}
+
+.calendar-widget {
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #ececec;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(18, 25, 70, 0.08);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.calendar-title img {
+  width: 18px;
+  height: 18px;
+}
+
+.calendar-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-controls button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.calendar-controls button img {
+  width: 14px;
+  height: 14px;
+}
+
+.calendar-month-label {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4d40ca;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-grid span {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+
+.calendar-days {
+  margin-top: 8px;
+}
+
+.calendar-cell {
+  width: 100%;
+  min-height: 42px;
+  border: none;
+  border-radius: 10px;
+  background: #f7f7f7;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.calendar-cell:hover:not(:disabled) {
+  background: #ecebfd;
+}
+
+.calendar-cell.available {
+  background: #fff;
+  border: 1px solid #ecebef;
+}
+
+.calendar-cell.selected {
+  background: var(--primary-blue, #4d40ca);
+  color: #fff;
+}
+
+.calendar-cell .calendar-dot {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4d40ca;
+}
+
+.calendar-cell:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Price Row */
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.price-row label {
+  margin-bottom: 0;
+}
+
+.price-single {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--price-red, #e01600);
+}
+
+/* Quantity Control */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.quantity-control span {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #666;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.counter button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  transition: background 0.2s ease;
+}
+
+.counter button:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+.counter button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.counter .count {
+  width: 50px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  padding: 6px 0;
+}
+
+.counter .count::-webkit-outer-spin-button,
+.counter .count::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Total Row */
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+}
+
+.total-row label {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.total-price {
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--price-red, #e01600);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.btn-book-now {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+  border: 2px solid var(--primary-blue, #4d40ca);
+  color: var(--primary-blue, #4d40ca);
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-book-now:hover:not(:disabled) {
+  background: rgba(77, 64, 202, 0.05);
+}
+
+.btn-book-now:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-book-now img {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-book-primary {
+  flex: 3;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--primary-blue, #4d40ca);
+  border: none;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-book-primary:hover:not(:disabled) {
+  background: #3d32a3;
+}
+
+.btn-book-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-passenger-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-passenger-info:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-passenger-info:hover {
+  background: #f0f0f0;
+  border-color: #ccc;
+}
+
+.btn-passenger-info svg {
+  color: #666;
+}
+
+.btn-passenger-info img {
+  width: 18px;
+  height: 18px;
+}
+
+.schedule-title {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Trip Info Widget */
+.trip-info-widget {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-list li img,
+.info-list li svg {
+  width: 18px;
+  height: 18px;
+  color: #666;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-list li span {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.info-list li strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Loading and Empty States */
+.loading-state,
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .tour-layout {
+    flex-direction: column;
+  }
+
+  .right-sidebar {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tour-headline {
+    font-size: 22px;
+  }
+
+  .main-image {
+    height: 300px;
+  }
+
+  .right-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .itinerary-cards {
+    flex-direction: column;
+  }
+
+  .day-card {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-image {
+    height: 220px;
+  }
+
+  .price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .quantity-control {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Image Skeleton Loader */
+.image-skeleton {
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-shimmer {
+  width: 60px;
+  height: 60px;
+  border: 3px solid #ccc;
+  border-top-color: #4D40CA;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading trips state */
+.loading-trips {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+}
+
+/* Disabled navigation buttons */
+.gallery-container .nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gallery-container .nav-btn:disabled:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: none;
+}

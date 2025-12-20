@@ -1,0 +1,142 @@
+/* PayOS Payment Modal Styles */
+.payment-modal {
+  max-width: 500px;
+  min-width: 400px;
+}
+
+.payment-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.payment-info {
+  width: 100%;
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.payment-amount {
+  font-size: 24px;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.payment-amount strong {
+  color: #4D40CA;
+  font-weight: 700;
+}
+
+.payment-order-code {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.payment-description {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.qr-code-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.qr-code-image {
+  width: 280px;
+  height: 280px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+}
+
+.qr-instruction {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  max-width: 300px;
+}
+
+.payment-url-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-open-payment {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #6FC6A1 0%, #4D40CA 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-open-payment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(77, 64, 202, 0.3);
+}
+
+.bank-info {
+  width: 100%;
+  background: #eff6ff;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+.bank-info p {
+  font-size: 14px;
+  color: #1e40af;
+  margin-bottom: 8px;
+}
+
+.bank-info p:last-child {
+  margin-bottom: 0;
+}
+
+.bank-info strong {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.payment-modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.payment-modal-footer .btn-modal-cancel {
+  background: #ef4444;
+}
+
+.payment-modal-footer .btn-modal-cancel:hover {
+  background: #dc2626;
+}
+
+.payment-modal-footer .btn-modal-save {
+  background: #22c55e;
+}
+
+.payment-modal-footer .btn-modal-save:hover {
+  background: #16a34a;
+}
+
+.payment-modal-footer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

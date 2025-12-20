@@ -1,138 +1,104 @@
-import api from "./api";
+import api from "../lib/httpHandler";
 
-const BOOKING_ENDPOINT = "/tour-bookings";
+const BASE_PATH = "/api/v1/customer/bookings";
 
-/**
- * Booking Service - API calls for booking management
- */
 const bookingService = {
 	/**
-	 * Get all bookings with pagination and filters
-	 * @param {Object} params - Filter parameters
-	 * @param {number} params.page - Page number (1-based)
-	 * @param {number} params.pageSize - Items per page
-	 * @param {string} params.keyword - Search by customer name, email, or route
-	 * @param {string} params.status - Filter by status (PENDING, CONFIRMED, CANCELED, COMPLETED)
-	 * @param {string} params.sortBy - Sort field
-	 * @param {string} params.sortDirection - Sort direction (asc/desc)
-	 * @param {string} params.fromDate - Filter by booking date from (YYYY-MM-DD)
-	 * @param {string} params.toDate - Filter by booking date to (YYYY-MM-DD)
-	 * @param {string} params.departureFrom - Filter by departure date from
-	 * @param {string} params.departureTo - Filter by departure date to
+	 * Create a new booking
+	 * @param {Object} data - { tripId, quantity, cartItemId?, travelers? }
 	 */
-	getAll: async (params = {}) => {
-		const queryParams = new URLSearchParams();
-
-		if (params.page) queryParams.append("page", params.page);
-		if (params.pageSize) queryParams.append("pageSize", params.pageSize);
-		if (params.keyword) queryParams.append("keyword", params.keyword);
-		if (params.status) queryParams.append("status", params.status);
-		if (params.sortBy) queryParams.append("sortBy", params.sortBy);
-		if (params.sortDirection)
-			queryParams.append("sortDirection", params.sortDirection);
-		if (params.fromDate) queryParams.append("fromDate", params.fromDate);
-		if (params.toDate) queryParams.append("toDate", params.toDate);
-		if (params.departureFrom)
-			queryParams.append("departureFrom", params.departureFrom);
-		if (params.departureTo)
-			queryParams.append("departureTo", params.departureTo);
-		if (params.userId) queryParams.append("userId", params.userId);
-		if (params.tripId) queryParams.append("tripId", params.tripId);
-
-		const queryString = queryParams.toString();
-		const url = queryString
-			? `${BOOKING_ENDPOINT}?${queryString}`
-			: BOOKING_ENDPOINT;
-
-		return api.get(url);
+	createBooking: async (data) => {
+		return api.post(BASE_PATH, data);
 	},
 
 	/**
 	 * Get booking by ID
-	 * @param {string} id - Booking UUID
+	 * @param {string} bookingId
 	 */
-	getById: async (id) => {
-		return api.get(`${BOOKING_ENDPOINT}/${id}`);
+	getBookingById: async (bookingId) => {
+		return api.get(`${BASE_PATH}/${bookingId}`);
 	},
 
 	/**
-	 * Get bookings by user ID
-	 * @param {string} userId - User UUID
+	 * Get all bookings for current user (reservation list)
+	 * @param {string} status - 'all', 'paid', 'unpaid'
 	 */
-	getByUserId: async (userId) => {
-		return api.get(`${BOOKING_ENDPOINT}/user/${userId}`);
+	getMyBookings: async (status = "all") => {
+		return api.get(`${BASE_PATH}?status=${status}`);
 	},
 
 	/**
-	 * Create new booking
-	 * @param {Object} bookingData - Booking data
-	 * @param {string} bookingData.tripId - Trip UUID
-	 * @param {string} bookingData.userId - User UUID
-	 * @param {number} bookingData.noAdults - Number of adults
-	 * @param {number} bookingData.noChildren - Number of children
-	 * @param {Array} bookingData.travelers - Array of traveler info
-	 * @param {string} bookingData.travelers[].fullName - Traveler full name
-	 * @param {string} bookingData.travelers[].gender - Gender (M/F/O)
-	 * @param {string} bookingData.travelers[].dateOfBirth - Date of birth (YYYY-MM-DD)
-	 * @param {string} bookingData.travelers[].identityDoc - Identity document number
+	 * Get payment page data for a booking
+	 * @param {string} bookingId
 	 */
-	create: async (bookingData) => {
-		return api.post(BOOKING_ENDPOINT, bookingData);
+	getPaymentPageData: async (bookingId) => {
+		return api.get(`${BASE_PATH}/${bookingId}/payment`);
 	},
 
 	/**
-	 * Update booking
-	 * @param {string} id - Booking UUID
-	 * @param {Object} updateData - Update data
-	 * @param {string} updateData.status - New status (PENDING, CONFIRMED, CANCELED, COMPLETED)
-	 * @param {Array} updateData.travelers - Updated travelers (optional)
-	 * @param {number} updateData.noAdults - Updated number of adults
-	 * @param {number} updateData.noChildren - Updated number of children
-	 * @param {string} updateData.notes - Special notes
+	 * Add travelers to a booking
+	 * @param {string} bookingId
+	 * @param {Array} travelers - Array of traveler objects
 	 */
-	update: async (id, updateData) => {
-		return api.put(`${BOOKING_ENDPOINT}/${id}`, updateData);
+	addTravelers: async (bookingId, travelers) => {
+		return api.post(`${BASE_PATH}/${bookingId}/travelers`, travelers);
 	},
 
 	/**
-	 * Update booking status only
-	 * @param {string} id - Booking UUID
-	 * @param {string} status - New status
+	 * Update a specific traveler
+	 * @param {string} bookingId
+	 * @param {string} travelerId
+	 * @param {Object} travelerData
 	 */
-	updateStatus: async (id, status) => {
-		return api.put(`${BOOKING_ENDPOINT}/${id}`, { status });
+	updateTraveler: async (bookingId, travelerId, travelerData) => {
+		return api.put(
+			`${BASE_PATH}/${bookingId}/travelers/${travelerId}`,
+			travelerData
+		);
+	},
+
+	/**
+	 * Update booking quantity
+	 * @param {string} bookingId
+	 * @param {number} quantity
+	 */
+	updateQuantity: async (bookingId, quantity) => {
+		return api.put(`${BASE_PATH}/${bookingId}/quantity?quantity=${quantity}`);
+	},
+
+	/**
+	 * Confirm booking
+	 * @param {string} bookingId
+	 */
+	confirmBooking: async (bookingId) => {
+		return api.post(`${BASE_PATH}/${bookingId}/confirm`);
 	},
 
 	/**
 	 * Cancel booking
-	 * @param {string} id - Booking UUID
+	 * @param {string} bookingId
 	 */
-	cancel: async (id) => {
-		return api.post(`${BOOKING_ENDPOINT}/${id}/cancel`);
+	cancelBooking: async (bookingId) => {
+		return api.post(`${BASE_PATH}/${bookingId}/cancel`);
 	},
 
 	/**
-	 * Delete booking (Admin only)
-	 * @param {string} id - Booking UUID
+	 * Update payment method
+	 * @param {string} bookingId
+	 * @param {string} paymentMethod - 'CASH', 'BANK_TRANSFER', 'E_WALLET'
 	 */
-	delete: async (id) => {
-		return api.delete(`${BOOKING_ENDPOINT}/${id}`);
+	updatePaymentMethod: async (bookingId, paymentMethod) => {
+		return api.put(`${BASE_PATH}/${bookingId}/payment-method`, {
+			paymentMethod,
+		});
 	},
 
 	/**
-	 * Confirm booking (change status to CONFIRMED)
-	 * @param {string} id - Booking UUID
+	 * Mark booking as paid (demo/testing)
+	 * @param {string} bookingId
 	 */
-	confirm: async (id) => {
-		return api.put(`${BOOKING_ENDPOINT}/${id}`, { status: "CONFIRMED" });
-	},
-
-	/**
-	 * Complete booking (change status to COMPLETED)
-	 * @param {string} id - Booking UUID
-	 */
-	complete: async (id) => {
-		return api.put(`${BOOKING_ENDPOINT}/${id}`, { status: "COMPLETED" });
+	markAsPaid: async (bookingId) => {
+		return api.post(`${BASE_PATH}/${bookingId}/mark-paid`);
 	},
 };
 

@@ -1,0 +1,794 @@
+/* ============================================
+   PAYMENT PAGE STYLES
+   ============================================ */
+
+/* Page Container */
+.payment-page {
+  background: #f0f0f0;
+  min-height: 100vh;
+  padding: 24px 0;
+}
+
+.payment-page .container {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.payment-page .page-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #021526;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* Layout */
+.payment-page .payment-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Left Column */
+.payment-page .payment-left {
+  width: 380px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Right Column */
+.payment-page .payment-right {
+  flex: 1;
+}
+
+/* Section Styling */
+.payment-page .contact-section,
+.payment-page .payment-method-section,
+.payment-page .order-section {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.payment-page .section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #021526;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Contact Form */
+.payment-page .contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payment-page .form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.payment-page .form-group input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #021526;
+  background: #f9fafb;
+}
+
+.payment-page .form-group input:read-only {
+  background: #f3f4f6;
+  cursor: default;
+}
+
+/* Payment Methods */
+.payment-page .payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-page .payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-page .payment-option:hover {
+  border-color: #6BABF4;
+  background: #f0f7ff;
+}
+
+.payment-page .payment-option.active {
+  border-color: #6BABF4;
+  background: #f0f7ff;
+}
+
+.payment-page .payment-option.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.payment-page .payment-option.disabled:hover {
+  border-color: #e5e7eb;
+  background: #fff;
+}
+
+.payment-page .payment-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #6BABF4;
+}
+
+.payment-page .payment-option img {
+  width: 32px;
+  height: 32px;
+}
+
+.payment-page .payment-option span {
+  font-size: 15px;
+  font-weight: 500;
+  color: #021526;
+}
+
+/* Tour Card */
+.payment-page .tour-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.payment-page .tour-image {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.payment-page .tour-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.payment-page .tour-details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-page .tour-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.payment-page .tour-route-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #021526;
+}
+
+.payment-page .tour-description {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.payment-page .tour-route-code {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.payment-page .tour-info-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.payment-page .tour-info-grid .tour-info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+  white-space: nowrap;
+  flex: 1 1 220px;
+}
+
+.payment-page .tour-info-grid .tour-info-item img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+}
+
+.payment-page .tour-info-grid .tour-info-item strong {
+  color: #021526;
+  font-weight: 600;
+}
+
+.payment-page .tour-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.payment-page .tour-price-row .quantity {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.payment-page .tour-price-row .price {
+  font-size: 22px;
+  font-weight: 700;
+  color: #6BABF4;
+}
+
+/* Passenger Section */
+.payment-page .passenger-section {
+  margin-bottom: 24px;
+}
+
+.payment-page .passenger-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #021526;
+  margin-bottom: 12px;
+}
+
+.payment-page .passenger-table-wrapper {
+  overflow-x: auto;
+}
+
+.payment-page .passenger-table {
+  width: 100%;
+  border-collapse: collapse;
+
+.payment-page .btn-view-ticket {
+  padding: 6px 12px;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.payment-page .btn-view-ticket:hover {
+  background: #1e40af;
+}
+
+.payment-page .ticket-awaiting {
+  font-size: 12px;
+  color: #6b7280;
+}
+  font-size: 14px;
+}
+
+.payment-page .passenger-table th,
+.payment-page .passenger-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.payment-page .passenger-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.payment-page .passenger-table td {
+  color: #021526;
+}
+
+.payment-page .passenger-qr-cell {
+  width: 160px;
+}
+
+.payment-page .ticket-code-label {
+  font-size: 12px;
+  color: #475569;
+  text-align: center;
+  word-break: break-word;
+  max-width: 110px;
+}
+
+.payment-page .passenger-table .no-travelers {
+  text-align: center;
+  color: #9ca3af;
+  padding: 24px;
+}
+
+.payment-page .btn-edit-traveler {
+  padding: 6px 12px;
+  background: #6BABF4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.payment-page .btn-edit-traveler:hover {
+  background: #5a9ae3;
+}
+
+/* Invoice Summary */
+.payment-page .invoice-summary {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.payment-page .summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.payment-page .summary-row span {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.payment-page .summary-row strong {
+  color: #021526;
+  font-size: 14px;
+}
+
+.payment-page .summary-row.total {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+  padding-top: 16px;
+}
+
+.payment-page .summary-row.total span {
+  font-weight: 600;
+  color: #021526;
+}
+
+.payment-page .summary-row.total strong {
+  font-size: 20px;
+  color: #6BABF4;
+}
+
+/* Status Badge */
+.payment-page .status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.payment-page .status-badge.paid {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.payment-page .status-badge.unpaid {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.payment-page .status-badge.pending {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.payment-page .status-badge.cancelled,
+.payment-page .status-badge.refunded {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Action Buttons */
+.payment-page .action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.payment-page .btn-cancel {
+  padding: 14px 32px;
+  background: #fff;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-page .btn-cancel:hover {
+  background: #fef2f2;
+}
+
+.payment-page .btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.payment-page .btn-confirm {
+  padding: 14px 32px;
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.payment-page .btn-confirm:hover {
+  background: #16a34a;
+}
+
+.payment-page .btn-confirm:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Notices */
+.payment-page .cancelled-notice {
+  text-align: center;
+  padding: 16px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.payment-page .paid-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: #dcfce7;
+  color: #16a34a;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.payment-page .paid-icon {
+  width: 24px;
+  height: 24px;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Loading & Error States */
+.payment-page .loading-state,
+.payment-page .error-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 24px;
+}
+
+.payment-page .loading-state {
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.payment-page .error-state p {
+  font-size: 18px;
+  color: #ef4444;
+  margin-bottom: 20px;
+}
+
+.payment-page .error-state button {
+  padding: 12px 24px;
+  background: #6BABF4;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* ============================================
+   MODAL STYLES
+   ============================================ */
+
+.payment-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.payment-page .modal-content {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.payment-page .ticket-modal {
+  max-width: 420px;
+}
+
+.payment-page .ticket-modal-body {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.payment-page .ticket-modal-label {
+  font-size: 14px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.payment-page .ticket-modal-note {
+  font-size: 13px;
+  color: #475569;
+  text-align: center;
+}
+
+.payment-page .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.payment-page .modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #021526;
+  margin: 0;
+}
+
+.payment-page .modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 50%;
+  font-size: 24px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.payment-page .modal-close:hover {
+  background: #e5e7eb;
+}
+
+.payment-page .modal-body {
+  padding: 24px;
+}
+
+.payment-page .modal-form-group {
+  margin-bottom: 16px;
+}
+
+.payment-page .modal-form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.payment-page .modal-form-group input,
+.payment-page .modal-form-group select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #021526;
+  background: #fff;
+}
+
+.payment-page .modal-form-group input:focus,
+.payment-page .modal-form-group select:focus {
+  outline: none;
+  border-color: #6BABF4;
+}
+
+.payment-page .modal-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.payment-page .modal-form-row .modal-form-group {
+  flex: 1;
+}
+
+.payment-page .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.payment-page .btn-modal-cancel {
+  padding: 10px 20px;
+  background: #fff;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.payment-page .btn-modal-cancel:hover {
+  background: #f9fafb;
+}
+
+.payment-page .btn-modal-save {
+  padding: 10px 20px;
+  background: #6BABF4;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.payment-page .btn-modal-save:hover {
+  background: #5a9ae3;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .payment-page .payment-layout {
+    flex-direction: column;
+  }
+
+  .payment-page .payment-left {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .payment-page .contact-section,
+  .payment-page .payment-method-section {
+    flex: 1;
+    min-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-page .page-title {
+    font-size: 24px;
+  }
+
+  .payment-page .payment-left {
+    flex-direction: column;
+  }
+
+  .payment-page .contact-section,
+  .payment-page .payment-method-section {
+    width: 100%;
+  }
+
+  .payment-page .tour-image {
+    height: 150px;
+  }
+
+  .payment-page .action-buttons {
+    flex-direction: column;
+  }
+
+  .payment-page .btn-cancel,
+  .payment-page .btn-confirm {
+    width: 100%;
+    text-align: center;
+  }
+
+  .payment-page .passenger-table {
+    font-size: 12px;
+  }
+
+  .payment-page .passenger-table th,
+  .payment-page .passenger-table td {
+    padding: 8px 6px;
+  }
+
+  .payment-page .tour-info-grid {
+    gap: 10px;
+  }
+
+  .payment-page .tour-info-grid .tour-info-item {
+    flex: 1 1 100%;
+  }
+
+  .payment-page .tour-route-code {
+    width: fit-content;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-page .container {
+    padding: 0 12px;
+  }
+
+  .payment-page .contact-section,
+  .payment-page .payment-method-section,
+  .payment-page .order-section {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .payment-page .tour-price-row .price {
+    font-size: 18px;
+  }
+
+  .payment-page .modal-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

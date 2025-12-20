@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL, API_CONFIG, AUTH_CONFIG } from '../config/constants';
+import authService from './authService';
 
 // Tạo instance axios với cấu hình mặc định
 const api = axios.create({
@@ -26,7 +27,7 @@ const processQueue = (error, token = null) => {
 // Request interceptor - thêm access token vào header
 api.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
+    const accessToken = authService.getToken();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -62,11 +63,11 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = localStorage.getItem(AUTH_CONFIG.REFRESH_TOKEN_KEY);
+      const refreshToken = authService.getRefreshToken();
       
       if (!refreshToken) {
         // Không có refresh token, redirect về login
-        localStorage.clear();
+        authService.logout();
         window.location.href = '/login';
         return Promise.reject(error);
       }
@@ -81,8 +82,8 @@ api.interceptors.response.use(
         const { token, refreshToken: newRefreshToken } = response.data.data;
         
         // Lưu token mới
-        localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token);
-        localStorage.setItem(AUTH_CONFIG.REFRESH_TOKEN_KEY, newRefreshToken);
+        sessionStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token);
+        sessionStorage.setItem(AUTH_CONFIG.REFRESH_TOKEN_KEY, newRefreshToken);
         
         // Update header cho request ban đầu
         originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -98,7 +99,7 @@ api.interceptors.response.use(
         isRefreshing = false;
         
         // Refresh token hết hạn, clear và redirect
-        localStorage.clear();
+        authService.logout();
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }

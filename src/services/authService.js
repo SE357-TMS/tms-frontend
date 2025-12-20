@@ -28,13 +28,21 @@ const authService = {
     
     // Decode JWT token để lấy user info
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const userInfo = {
-        username: payload.sub,
-        role: payload.role,
-        fullName: payload.fullName || payload.sub
-      };
-      sessionStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(userInfo));
+      if (token && token.includes('.')) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const payload = JSON.parse(jsonPayload);
+        const userInfo = {
+          username: payload.sub,
+          role: payload.role,
+          fullName: payload.fullName || payload.sub
+        };
+        sessionStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(userInfo));
+      }
     } catch (e) {
       console.error('Failed to decode token:', e);
     }
@@ -95,8 +103,14 @@ const authService = {
 
   // Lấy thông tin user hiện tại
   getCurrentUser: () => {
-    const userStr = sessionStorage.getItem(AUTH_CONFIG.USER_KEY);
-    return userStr ? JSON.parse(userStr) : null;
+    try {
+      const userStr = sessionStorage.getItem(AUTH_CONFIG.USER_KEY);
+      if (!userStr || userStr === 'undefined') return null;
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error('Error parsing user from session storage:', e);
+      return null;
+    }
   },
 
   // Lưu thông tin user

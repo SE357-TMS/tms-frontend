@@ -44,6 +44,15 @@ const cartService = {
   },
 
   /**
+   * Remove multiple items from cart
+   * @param {string[]} cartItemIds - Array of Cart item IDs (UUID)
+   * @returns {Promise} API response
+   */
+  removeMultipleFromCart: async (cartItemIds) => {
+    return api.post(`${BASE_PATH}/items/bulk-delete`, cartItemIds);
+  },
+
+  /**
    * Clear all items from cart
    * @returns {Promise} API response
    */
@@ -58,11 +67,8 @@ const cartService = {
    */
   hasTripInCart: async (tripId) => {
     try {
-      const cartResponse = await api.get(BASE_PATH);
-      if (cartResponse?.data?.items) {
-        return cartResponse.data.items.some(item => item.tripId === tripId);
-      }
-      return false;
+      const response = await api.get(`${BASE_PATH}/check/${tripId}`);
+      return response?.data?.data || false;
     } catch (error) {
       console.error('Error checking cart:', error);
       return false;

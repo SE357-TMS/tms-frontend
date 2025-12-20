@@ -2,18 +2,15 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import routeService from "../../../services/routeService";
-import tripService from "../../../services/tripService";
 import cartService from "../../../services/cartService";
 import Swal from "sweetalert2";
 import "./RouteDetailPage.css";
-import imageService from "../../../services/imageService";
 
 // Import icons
 import HeartIcon from "../../../assets/icons/heart.svg";
 import LeftArrow from "../../../assets/icons/left.svg";
 import RightArrow from "../../../assets/icons/right.svg";
 import CalendarIcon from "../../../assets/icons/calendardate.svg";
-import AddPersonIcon from "../../../assets/icons/addperson.svg";
 import MarkerPinIcon from "../../../assets/icons/markerpin.svg";
 import AlarmClockIcon from "../../../assets/icons/alarmclock.svg";
 import ShoppingCartIcon from "../../../assets/icons/shoppingcart.svg";
@@ -66,25 +63,61 @@ export default function RouteDetailPage() {
   // Booking state
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [hasTripInCart, setHasTripInCart] = useState(false);
 
   // Image slider state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const imagesLoading = loading || routeImages.length === 0;
 
   // Itinerary slider state
   const [itineraryStartIndex, setItineraryStartIndex] = useState(0);
   const [calendarMonth, setCalendarMonth] = useState(() => new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
-  // Fetch route details
+  // Fetch all data in one API call
   useEffect(() => {
-    const fetchRouteDetail = async () => {
+    const mergeRouteImages = (primaryImage, additional = []) => {
+      const seen = new Set();
+      const merged = [];
+
+      const push = (img) => {
+        if (img && !seen.has(img)) {
+          seen.add(img);
+          merged.push(img);
+        }
+      };
+
+      push(primaryImage);
+      (additional || []).forEach(push);
+      return merged;
+    };
+
+    const loadRouteImages = async (primaryImage) => {
+      try {
+        const imagesResponse = await routeService.getRouteImages(id);
+        const imagesPayload = imagesResponse?.data?.data;
+        if (Array.isArray(imagesPayload)) {
+            setRouteImages((prev) => mergeRouteImages(primaryImage, imagesPayload));
+        }
+      } catch (error) {
+        console.error("Error fetching route images:", error);
+      }
+    };
+
+    const fetchFullRouteDetail = async () => {
       try {
         setLoading(true);
-        const response = await routeService.getRouteDetail(id);
-        const routePayload = response?.data?.data;
-        if (routePayload) {
-          setRoute(routePayload);
+        const response = await routeService.getRouteFullDetail(id);
+        const payload = response?.data?.data;
+        if (payload) {
+          setRoute(payload);
+          setAvailableTrips(payload.availableTrips || []);
+          // Select nearest trip by default
+          if (payload.availableTrips?.length > 0) {
+            setSelectedTrip(payload.availableTrips[0]);
+          }
+          setRouteImages((prev) => mergeRouteImages(payload.image, prev));
+          loadRouteImages(payload.image);
         }
       } catch (error) {
         console.error("Error fetching route:", error);
@@ -93,68 +126,8 @@ export default function RouteDetailPage() {
         setLoading(false);
       }
     };
-    fetchRouteDetail();
+    fetchFullRouteDetail();
   }, [id]);
-
-  // Fetch available trips
-  useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await tripService.getAvailableTripsByRoute(id);
-        const tripsPayload = response?.data?.data;
-        if (Array.isArray(tripsPayload)) {
-          setAvailableTrips(tripsPayload);
-          // Select nearest trip by default
-          if (tripsPayload.length > 0) {
-            setSelectedTrip(tripsPayload[0]);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching trips:", error);
-      }
-    };
-    fetchTrips();
-  }, [id]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const fetchRouteImages = async () => {
-      try {
-        const response = await imageService.getRouteImages(id);
-        const payload = response?.data?.data;
-        if (!isMounted) return;
-        if (Array.isArray(payload) && payload.length > 0) {
-          setRouteImages(payload);
-        }
-      } catch (error) {
-        console.error("Error fetching route images:", error);
-      }
-    };
-
-    setRouteImages([]);
-    fetchRouteImages();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
-
-  // Check if selected trip is in cart
-  useEffect(() => {
-    const checkCart = async () => {
-      if (selectedTrip && isAuthenticated) {
-        try {
-          const response = await cartService.hasTripInCart(selectedTrip.tripId);
-          setHasTripInCart(response?.data || false);
-        } catch {
-          setHasTripInCart(false);
-        }
-      } else {
-        setHasTripInCart(false);
-      }
-    };
-    checkCart();
-  }, [selectedTrip, isAuthenticated]);
 
   // Calculate total price
   useEffect(() => {
@@ -167,7 +140,7 @@ export default function RouteDetailPage() {
 
   // Handle image navigation
   const handleImageNav = (direction) => {
-    const availableImages = routeImages.length ? routeImages : route?.images || [];
+    const availableImages = routeImages.length ? routeImages : routeMediaImages;
     if (availableImages.length === 0) return;
 
     setCurrentImageIndex((prev) => {
@@ -249,7 +222,6 @@ export default function RouteDetailPage() {
         icon: "success",
         confirmButtonColor: "#4D40CA",
       });
-      setHasTripInCart(true);
     } catch (error) {
       console.error("Error adding to cart:", error);
       Swal.fire("Error", "Failed to add to cart", "error");
@@ -257,7 +229,12 @@ export default function RouteDetailPage() {
   };
 
   // Handle book now
-  const handleBookNow = async () => {
+  const buildRouteCode = (id) => {
+    if (!id) return "";
+    return id.toString().replaceAll("-", "").toUpperCase().slice(0, 6);
+  };
+
+  const handleBookNow = () => {
     if (!isAuthenticated) {
       Swal.fire({
         title: "Login Required",
@@ -277,20 +254,30 @@ export default function RouteDetailPage() {
 
     if (!selectedTrip || quantity <= 0) return;
 
-    try {
-      await cartService.addToCart(selectedTrip.tripId, quantity);
-      navigate("/cart");
-    } catch (error) {
-      console.error("Error:", error);
-      Swal.fire("Error", "Failed to proceed", "error");
-    }
-  };
+    const tripData = {
+      routeName: route?.routeName,
+      routeCode: buildRouteCode(route?.id),
+      routeImage: route?.image || routeImages[0],
+      departureLocation: route?.startLocation,
+      destination: route?.endLocation,
+      durationDays: route?.durationDays,
+      departureDate: selectedTrip.departureDate,
+      returnDate: selectedTrip.returnDate,
+      unitPrice: selectedTrip.price,
+      price: selectedTrip.price,
+      availableSeats: selectedTrip.availableSeats,
+      tripId: selectedTrip.tripId,
+      pickUpLocation: selectedTrip.pickUpLocation,
+      pickUpTime: selectedTrip.pickUpTime,
+    };
 
-  // Handle passenger info
-  const handlePassengerInfo = () => {
-    if (selectedTrip) {
-      navigate(`/cart/passengers/${selectedTrip.tripId}`);
-    }
+    navigate("/passengers/new", {
+      state: {
+        fromRouteDetail: true,
+        tripData,
+        quantity,
+      },
+    });
   };
 
   const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -427,19 +414,27 @@ export default function RouteDetailPage() {
           <div className="left-content">
             {/* Image Gallery */}
             <div className="gallery-container">
-              <img src={currentImage} alt={route.routeName} className="main-image" />
+              {imagesLoading ? (
+                <div className="image-skeleton">
+                  <div className="skeleton-shimmer"></div>
+                </div>
+              ) : (
+                <img src={currentImage} alt={route.routeName} className="main-image" />
+              )}
               <div className="gallery-fade left"></div>
               <div className="gallery-fade right"></div>
               
               <button
                 className="nav-btn prev"
                 onClick={() => handleImageNav(-1)}
+                disabled={imagesLoading}
               >
                 <img src={LeftArrow} alt="Previous" />
               </button>
               <button
                 className="nav-btn next"
                 onClick={() => handleImageNav(1)}
+                disabled={imagesLoading}
               >
                 <img src={RightArrow} alt="Next" />
               </button>
@@ -533,9 +528,11 @@ export default function RouteDetailPage() {
                   </button>
                 </div>
                 <div className="departure-dates-list">
-                  {availableTrips.length === 0 ? (
-                    <p className="no-trips">No available trips</p>
-                  ) : (
+                  {loading ? (
+                      <p className="loading-trips">Loading trips...</p>
+                    ) : availableTrips.length === 0 ? (
+                      <p className="no-trips">No available trips</p>
+                    ) : (
                     <div className="trip-buttons">
                       {availableTrips.slice(0, 5).map((trip) => (
                         <button
@@ -674,14 +671,6 @@ export default function RouteDetailPage() {
                   Book now
                 </button>
               </div>
-              <button
-                className="btn-passenger-info"
-                onClick={handlePassengerInfo}
-                disabled={!hasTripInCart}
-              >
-                <img src={AddPersonIcon} alt="Passenger info" />
-                Enter passenger information
-              </button>
             </div>
 
             {/* Trip Information Widget */}

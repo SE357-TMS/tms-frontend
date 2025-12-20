@@ -2,16 +2,40 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import Swal from "sweetalert2";
+import customerProfileService from "../../../services/customerProfileService";
 import "./CustomerHeader.css";
 import SearchIcon from "../../../assets/icons/searchicon.svg";
 import ShoppingCartIcon from "../../../assets/icons/shoppingcart.svg";
+
+const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80";
 
 export default function CustomerHeader() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [profile, setProfile] = useState(null);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        const response = await customerProfileService.getProfile();
+        const profileData = response?.data?.data;
+        if (profileData) {
+          setProfile(profileData);
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, [isAuthenticated]);
+
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -26,6 +50,7 @@ export default function CustomerHeader() {
 
   const handleLogout = async () => {
     await logout();
+    setShowDropdown(false);
     navigate("/");
   };
 
@@ -70,11 +95,7 @@ export default function CustomerHeader() {
     return "User";
   };
 
-  const getAvatarDisplay = () => {
-    if (!user) return "G";
-    const name = user.fullName || user.username || "U";
-    return name.charAt(0).toUpperCase();
-  };
+  const avatarUrl = profile?.avatarUrl || user?.avatarUrl || DEFAULT_AVATAR;
 
   return (
     <header className="customer-header">
@@ -141,11 +162,13 @@ export default function CustomerHeader() {
               ref={dropdownRef}
             >
               <div className="user-avatar">
-                {user?.avatarUrl ? (
-                  <img src={user.avatarUrl} alt={getDisplayName()} />
-                ) : (
-                  <div className="avatar-placeholder">{getAvatarDisplay()}</div>
-                )}
+                <img
+                  src={avatarUrl}
+                  alt={getDisplayName()}
+                  onError={(e) => {
+                    e.target.src = DEFAULT_AVATAR;
+                  }}
+                />
               </div>
               <div className="user-info">
                 <span className="user-name">{getDisplayName()}</span>
@@ -167,51 +190,51 @@ export default function CustomerHeader() {
                 />
               </svg>
 
+
               {showDropdown && (
                 <div className="user-dropdown">
-                  <button
+                  {/* Nút Profile */}
+                  <Link
+                    to="/profile"
                     className="dropdown-item"
-                    onClick={() => navigate("/profile")}
+                    onClick={() => setShowDropdown(false)} // Chỉ cần đóng menu
                   >
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                      <path
-                        d="M10 10C12.21 10 14 8.21 14 6C14 3.79 12.21 2 10 2C7.79 2 6 3.79 6 6C6 8.21 7.79 10 10 10ZM10 12C7.33 12 2 13.34 2 16V18H18V16C18 13.34 12.67 12 10 12Z"
-                        fill="currentColor"
-                      />
+                      <path d="M10 10C12.21 10 14 8.21 14 6C14 3.79 12.21 2 10 2C7.79 2 6 3.79 6 6C6 8.21 7.79 10 10 10ZM10 12C7.33 12 2 13.34 2 16V18H18V16C18 13.34 12.67 12 10 12Z" fill="currentColor"/>
                     </svg>
                     Profile
-                  </button>
-                  <button
+                  </Link>
+
+                  {/* Nút Reservations - ĐANG BỊ LỖI CỦA BẠN */}
+                  <Link
+                    to="/reservations"
                     className="dropdown-item"
-                    onClick={() => navigate("/my-bookings")}
+                    onClick={() => setShowDropdown(false)}
                   >
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                      <path
-                        d="M17 3H14V2C14 1.45 13.55 1 13 1H7C6.45 1 6 1.45 6 2V3H3C1.9 3 1 3.9 1 5V17C1 18.1 1.9 19 3 19H17C18.1 19 19 18.1 19 17V5C19 3.9 18.1 3 17 3ZM8 2H12V3H8V2ZM17 17H3V5H17V17Z"
-                        fill="currentColor"
-                      />
+                      <path d="M17 3H14V2C14 1.45 13.55 1 13 1H7C6.45 1 6 1.45 6 2V3H3C1.9 3 1 3.9 1 5V17C1 18.1 1.9 19 3 19H17C18.1 19 19 18.1 19 17V5C19 3.9 18.1 3 17 3ZM8 2H12V3H8V2ZM17 17H3V5H17V17Z" fill="currentColor"/>
                     </svg>
-                    My Bookings
-                  </button>
-                  <button
+                    My Reservations
+                  </Link>
+
+                  {/* Nút Favorites */}
+                  <Link
+                    to="/favorites"
                     className="dropdown-item"
-                    onClick={() => navigate("/favorites")}
+                    onClick={() => setShowDropdown(false)}
                   >
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                      <path
-                        d="M10 17.77L8.77 16.66C3.1 11.52 0 8.65 0 5C0 2.24 2.24 0 5 0C6.74 0 8.41 0.81 10 2.09C11.59 0.81 13.26 0 15 0C17.76 0 20 2.24 20 5C20 8.65 16.9 11.52 11.23 16.66L10 17.77Z"
-                        fill="currentColor"
-                      />
+                      <path d="M10 17.77L8.77 16.66C3.1 11.52 0 8.65 0 5C0 2.24 2.24 0 5 0C6.74 0 8.41 0.81 10 2.09C11.59 0.81 13.26 0 15 0C17.76 0 20 2.24 20 5C20 8.65 16.9 11.52 11.23 16.66L10 17.77Z" fill="currentColor"/>
                     </svg>
                     Favorites
-                  </button>
+                  </Link>
+
                   <div className="dropdown-divider"></div>
+
+                  {/* Nút Logout giữ nguyên là button vì nó cần gọi API xử lý logic */}
                   <button className="dropdown-item logout" onClick={handleLogout}>
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                      <path
-                        d="M14 6L12.59 7.41L14.17 9H6V11H14.17L12.59 12.59L14 14L18 10L14 6ZM2 2H10V0H2C0.9 0 0 0.9 0 2V18C0 19.1 0.9 20 2 20H10V18H2V2Z"
-                        fill="currentColor"
-                      />
+                      <path d="M14 6L12.59 7.41L14.17 9H6V11H14.17L12.59 12.59L14 14L18 10L14 6ZM2 2H10V0H2C0.9 0 0 0.9 0 2V18C0 19.1 0.9 20 2 20H10V18H2V2Z" fill="currentColor"/>
                     </svg>
                     Logout
                   </button>

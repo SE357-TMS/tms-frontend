@@ -19,14 +19,65 @@ import AttractionsPage from '../pages/AttractionsPage/index.jsx';
 import StatisticsPage from '../pages/StatisticsPage/index.jsx';
 import CustomerRouteDetailPage from '../pages/customer/RouteDetailPage/index.jsx';
 import SearchResultsPage from '../pages/customer/SearchResultsPage/SearchResultsPage';
+import CartPage from '../pages/customer/CartPage/index.jsx';
+import PassengerListPage from '../pages/customer/PassengerListPage/index.jsx';
+import ReservationPage from '../pages/customer/ReservationPage/index.jsx';
+import PaymentPage from '../pages/customer/PaymentPage/index.jsx';
 import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
+import { useAuth } from '../hooks/useAuth';
 
 // Định nghĩa routes
+const LoadingScreen = () => (
+  <div style={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    background: '#ffffff'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{
+        width: '48px',
+        height: '48px',
+        margin: '0 auto 16px',
+        border: '4px solid #f3f4f6',
+        borderTopColor: '#4D40CA',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+      }} />
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg) }
+        }
+      `}</style>
+      <p style={{ color: '#6b7280', fontSize: '14px' }}>Đang tải...</p>
+    </div>
+  </div>
+);
+
+const CustomerAccessGuard = ({ children }) => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (isAuthenticated && user?.role === 'ADMIN') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
 export const router = createBrowserRouter([
   // Customer routes (public)
   {
-    element: <CustomerLayout />,
+    element: (
+      <CustomerAccessGuard>
+        <CustomerLayout />
+      </CustomerAccessGuard>
+    ),
     children: [
       {
         path: '/',
@@ -39,6 +90,26 @@ export const router = createBrowserRouter([
       {
         path: '/routes/:id',
         element: <CustomerRouteDetailPage />,
+      },
+      {
+        path: '/cart',
+        element: <CartPage />,
+      },
+      {
+        path: '/passengers/:bookingId',
+        element: <PassengerListPage />,
+      },
+      {
+        path: '/passengers/new',
+        element: <PassengerListPage />,
+      },
+      {
+        path: '/reservations',
+        element: <ReservationPage />,
+      },
+      {
+        path: '/payment/:bookingId',
+        element: <PaymentPage />,
       },
     ],
   },
@@ -60,7 +131,7 @@ export const router = createBrowserRouter([
   },
   {
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={["ADMIN"]}>
         <AdminLayout />
       </ProtectedRoute>
     ),

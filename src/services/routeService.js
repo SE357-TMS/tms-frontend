@@ -29,10 +29,28 @@ const routeService = {
   /**
    * Get route detail with full information (for customer view)
    * @param {string} id - Route ID (UUID)
-   * @returns {Promise} API response with complete route details
+   * @returns {Promise} API response with route detail and trips
    */
   getRouteDetail: async (id) => {
     return api.get(`${BASE_PATH}/${id}/detail`);
+  },
+
+  /**
+   * Get full route detail including itinerary and trips
+   * @param {string} id - Route ID (UUID)
+   * @returns {Promise} API response with route and trip metadata
+   */
+  getRouteFullDetail: async (id) => {
+    return api.get(`${BASE_PATH}/${id}/full`);
+  },
+
+  /**
+   * Get image URLs for a specific route
+   * @param {string} id - Route ID (UUID)
+   * @returns {Promise} API response with image URLs
+   */
+  getRouteImages: async (id) => {
+    return api.get(`${BASE_PATH}/${id}/images`);
   },
 
   /**

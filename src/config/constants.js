@@ -43,6 +43,7 @@ export const API_CONFIG = {
   TIMEOUT: 30000, // 10 seconds
   HEADERS: {
     'Content-Type': 'application/json',
+    "ngrok-skip-browser-warning": "69420",
   },
 };
 

@@ -1,0 +1,83 @@
+.customer-sidebar {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  padding: 30px 20px;
+  height: fit-content;
+  text-align: center;
+  min-width: 280px;
+  max-width: 300px;
+}
+
+.profile-summary {
+  margin-bottom: 20px;
+}
+
+.avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+}
+
+.user-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #000;
+}
+
+.user-email {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.profile-loading {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 10px 0;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: #000;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background-color: #f5f5f5;
+}
+
+.sidebar-link.active {
+  color: #5043CB;
+}
+
+.sidebar-link.active .sidebar-icon {
+  filter: brightness(0) saturate(100%) invert(29%) sepia(93%) saturate(1352%) hue-rotate(231deg) brightness(87%) contrast(91%);
+}
+
+.sidebar-icon {
+  width: 24px;
+  height: 24px;
+}

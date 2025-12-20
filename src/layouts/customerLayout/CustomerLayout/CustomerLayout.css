@@ -1,0 +1,16 @@
+/* Customer Layout Container */
+.customer-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Đảm bảo chiếm 100% */
+  min-height: 100vh; /* Chiều cao tối thiểu bằng màn hình */
+  margin: 0;
+  padding: 0;
+}
+
+.customer-content {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 100%; /* Thêm dòng này */
+}

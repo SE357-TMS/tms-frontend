@@ -40,9 +40,10 @@ export const AUTH_CONFIG = {
 
 // API config
 export const API_CONFIG = {
-  TIMEOUT: 10000, // 10 seconds
+  TIMEOUT: 30000, // 10 seconds
   HEADERS: {
     'Content-Type': 'application/json',
+    "ngrok-skip-browser-warning": "69420",
   },
 };
 

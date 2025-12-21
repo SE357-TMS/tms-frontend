@@ -3,60 +3,81 @@ import { useNavigate } from 'react-router-dom';
 import { AdminTitleContext } from '../../layouts/adminLayout/AdminLayout/AdminTitleContext';
 import './TripsPage.css';
 import viewIcon from '../../assets/icons/view.svg';
+import tripService from '../../services/tripService';
 
-const sampleTrips = [
-  {
-    id: 1,
-    name: 'Thái Lan: Bangkok - Pattaya (Nong Village)',
-    departure: '15:05 April 23, 2025',
-    pickup: 'Da Nang International Airport',
-    status: 'Waiting',
-    price: '4.990.000 đ',
-    booked: '19/21',
-  },
-  {
-    id: 2,
-    name: 'Vietnam: Da Nang - Hoi An',
-    departure: '09:00 May 02, 2025',
-    pickup: 'Da Nang International Airport',
-    status: 'Completed',
-    price: '1.200.000 đ',
-    booked: '21/21',
-  },
-  {
-    id: 3,
-    name: 'Laos: Vientiane - Luang Prabang',
-    departure: '07:30 June 10, 2025',
-    pickup: 'Noi Bai Airport',
-    status: 'Waiting',
-    price: '3.500.000 đ',
-    booked: '5/20',
-  },
-];
+// trips will be loaded from the backend
 
 const TripsPage = () => {
   const { setTitle, setSubtitle } = useContext(AdminTitleContext);
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [trips, setTrips] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setTitle('All Trips');
     setSubtitle('Information on all trips');
   }, [setTitle, setSubtitle]);
 
-  const trips = useMemo(() => {
-    if (!query) return sampleTrips;
-    return sampleTrips.filter(t => t.name.toLowerCase().includes(query.toLowerCase()));
-  }, [query]);
+  const filteredQuery = query; // keep variable name for clarity
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      setLoading(true);
+      try {
+        const params = { page: 1, pageSize: 50 };
+        if (filteredQuery) params.keyword = filteredQuery;
+        if (statusFilter) params.status = statusFilter;
+
+        const response = await tripService.getTrips(params);
+        const payload = response.data?.data || {};
+        const items = payload.items || payload.content || [];
+        setTrips(items);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching trips:', err);
+        setError('Unable to load trips');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrips();
+  }, [filteredQuery, statusFilter]);
 
   return (
     <div className="trips-page">
       <div className="trips-row-1">
         <div className="trips-filters">
           <div className="trips-search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <input placeholder="Search..." value={query} onChange={e => setQuery(e.target.value)} />
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by customer, email, tour..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
+          <select
+            className="trips-filter-select"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All Status</option>
+            <option value="SCHEDULED">Pending</option>
+            <option value="ONGOING">Confirmed</option>
+            <option value="FINISHED">Canceled</option>
+            <option value="CANCELED">Completed</option>
+          </select>
         </div>
 
         <button
@@ -91,52 +112,68 @@ const TripsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {trips.map(trip => (
-                <tr key={trip.id}>
-                  <td>
-                    <div className="trip-info">
-                      <div className="trip-name">{trip.name}</div>
-                      <div className="trip-sub">Short description or route</div>
-                    </div>
-                  </td>
-                  <td className="trip-departure">{trip.departure}</td>
-                  <td className="trip-pickup">{trip.pickup}</td>
-                  <td style={{textAlign:'center'}}>
-                    <span className={`status-badge ${trip.status.toLowerCase() === 'completed' ? 'completed' : 'waiting'}`}>{trip.status}</span>
-                  </td>
-                  <td className="trip-price" style={{textAlign:'center'}}>{trip.price}</td>
-                  <td className="trip-booked">{trip.booked}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        className="btn-view"
-                        onClick={() => navigate(`/trips/${trip.id}`)}
-                        title="View"
-                      >
-                        <img src={viewIcon} alt="View" />
-                      </button>
-                      <button
-                        className="btn-edit"
-                        onClick={() => alert(`Edit ${trip.id}`)}
-                        title="Edit"
-                      >
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                          <path d="M13.5 1.5L16.5 4.5M1.5 16.5L2.25 13.5L12.75 3L15 5.25L4.5 15.75L1.5 16.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                      <button
-                        className="btn-cancel-booking"
-                        onClick={() => alert(`Delete ${trip.id}`)}
-                        title="Delete"
-                      >
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                          <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="7" className="table-loading">
+                    <div className="spinner"></div> Loading trips...
                   </td>
                 </tr>
-              ))}
+              ) : error ? (
+                <tr>
+                  <td colSpan="7" className="table-error">{error}</td>
+                </tr>
+              ) : trips.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="table-empty">No trips found</td>
+                </tr>
+              ) : (
+                trips.map(trip => (
+                  <tr key={trip.id}>
+                    <td>
+                      <div className="trip-info">
+                        <div className="trip-name">{trip.name}</div>
+                        <div className="trip-sub">{trip.shortDescription || trip.routeName || 'Short description or route'}</div>
+                      </div>
+                    </td>
+                    <td className="trip-departure">{trip.departureDate || trip.departure}</td>
+                    <td className="trip-pickup">{trip.pickupLocation || trip.pickup}</td>
+                    <td style={{textAlign:'center'}}>
+                      <span className={`status-badge ${String(trip.status || '').toLowerCase() === 'completed' ? 'completed' : 'waiting'}`}>{trip.status || 'N/A'}</span>
+                    </td>
+                    <td className="trip-price" style={{textAlign:'center'}}>{trip.price}</td>
+                    <td className="trip-booked">{trip.booked || trip.seatsBooked || ''}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="btn-view"
+                          onClick={() => navigate(`/trips/${trip.id}`)}
+                          title="View"
+                        >
+                          <img src={viewIcon} alt="View" />
+                        </button>
+                        <button
+                          className="btn-edit"
+                          onClick={() => alert(`Edit ${trip.id}`)}
+                          title="Edit"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M13.5 1.5L16.5 4.5M1.5 16.5L2.25 13.5L12.75 3L15 5.25L4.5 15.75L1.5 16.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        <button
+                          className="btn-cancel-booking"
+                          onClick={() => alert(`Delete ${trip.id}`)}
+                          title="Delete"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

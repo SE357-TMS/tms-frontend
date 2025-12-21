@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './TripDetailPage.css';
 import viewIcon from '../../assets/icons/view.svg';
 import addNewIcon from '../../assets/icons/addnew.svg';
+import searchIcon from '../../assets/icons/searchicon.svg';
+import EditTripModal from './EditTripModal';
 
 const mockTrip = {
   id: 1,
@@ -25,6 +27,7 @@ const TripDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     // For now use mock data. Replace with API fetch later.
@@ -78,9 +81,16 @@ const TripDetailPage = () => {
           </div>
         </div>
 
-        <button className="btn-edit-trip" title="Edit trip" onClick={() => navigate(`/trips/${trip.id}/edit`)}>
+        <button className="btn-edit-trip" title="Edit trip" onClick={() => setShowEdit(true)}>
           ✏️
         </button>
+        {showEdit && (
+          <EditTripModal
+            trip={trip}
+            onClose={() => setShowEdit(false)}
+            onSave={(updated) => setTrip(updated)}
+          />
+        )}
       </div>
 
       <div className="travelers-section">
@@ -88,8 +98,8 @@ const TripDetailPage = () => {
           <h2>List of Booking Travelers</h2>
           <div className="section-actions">
             <div className="search-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              <input placeholder="Search..." />
+              <img src={searchIcon} alt="Search" className="search-icon" />
+              <input className="search-input" placeholder="Search..." />
             </div>
             <button className="btn-add-booking" onClick={() => navigate(`/bookings/new?tripId=${trip.id}`)}>
               <img src={addNewIcon} alt="Add" />

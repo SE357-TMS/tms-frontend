@@ -31,12 +31,37 @@
   min-width: 300px;
 }
 
+.trips-search svg {
+  color: var(--text-tertiary, #9ca3af);
+  flex-shrink: 0;
+}
+
 .trips-search input {
   border: none;
   outline: none;
   font-size: 14px;
   width: 100%;
   color: var(--text-primary, #1f2937);
+}
+
+.trips-search input::placeholder {
+  color: var(--text-tertiary, #9ca3af);
+}
+
+.trips-filter-select {
+  padding: 10px 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-primary, #1f2937);
+  background: white;
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.trips-filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color, #4d40ca);
 }
 
 /* Use booking page add button styles (.btn-add-booking) for consistent look */

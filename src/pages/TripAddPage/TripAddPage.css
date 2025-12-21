@@ -102,3 +102,9 @@ input[type="text"], input[type="date"], input[type="time"], input, select {
 /* Make inputs visually lighter with placeholder-like secondary text */
 input::placeholder { color: #bdbdbd; }
 
+/* Read-only inputs styling */
+input[readonly] {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}

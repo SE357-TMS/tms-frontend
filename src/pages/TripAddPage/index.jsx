@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import api from '../../lib/httpHandler';
 import './TripAddPage.css';
 import addIcon from '../../assets/icons/addnew.svg';
+import ChooseRouteModal from './ChooseRouteModal';
 
 export default function TripAddPage() {
   const navigate = useNavigate();
+  const [showRouteModal, setShowRouteModal] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
+    routeId: '',
     routeName: '',
     destination: '',
     departure: '',
@@ -15,7 +22,7 @@ export default function TripAddPage() {
     pickupLocation: '',
     price: '',
     totalSeats: '',
-    status: 'ACTIVE',
+    status: 'SCHEDULED',
   });
 
   const handleChange = (e) => {
@@ -24,14 +31,84 @@ export default function TripAddPage() {
   };
 
   const handleChooseRoute = () => {
-    alert('Choose route (not implemented)');
+    setShowRouteModal(true);
   };
 
-  const handleConfirm = (e) => {
+  const handleRouteSelect = (route) => {
+    setSelectedRoute(route);
+    setForm((prev) => ({
+      ...prev,
+      routeId: route.id,
+      routeName: route.routeName || '',
+      destination: route.endLocation || '',
+      departure: route.startLocation || '',
+    }));
+  };
+
+  const handleConfirm = async (e) => {
     e.preventDefault();
-    // TODO: call API to create trip
-    console.log('Create trip', form);
-    navigate('/trips');
+    
+    // Validation
+    if (!form.routeId) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please choose a route first',
+        confirmButtonColor: '#4D40CA',
+      });
+      return;
+    }
+
+    if (!form.departureDate || !form.returnDate || !form.price || !form.totalSeats) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please fill in all required fields',
+        confirmButtonColor: '#4D40CA',
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Prepare payload matching backend Trip entity
+      const payload = {
+        routeId: form.routeId,
+        departureDate: form.departureDate,
+        returnDate: form.returnDate,
+        price: parseFloat(form.price),
+        totalSeats: parseInt(form.totalSeats, 10),
+        pickUpTime: form.pickupTime || null,
+        pickUpLocation: form.pickupLocation || null,
+        status: form.status,
+      };
+
+      console.log('Creating trip with payload:', payload);
+
+      const response = await api.post('/api/v1/trips', payload);
+      
+      console.log('Trip created:', response);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Trip has been created successfully',
+        confirmButtonColor: '#4D40CA',
+      });
+
+      navigate('/trips');
+    } catch (err) {
+      console.error('Error creating trip:', err);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data?.message || 'Could not create trip',
+        confirmButtonColor: '#4D40CA',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -58,17 +135,17 @@ export default function TripAddPage() {
           <div className="grid grid-3">
             <label>
               <div className="label">Route name</div>
-              <input name="routeName" value={form.routeName} onChange={handleChange} placeholder="Route name" />
+              <input name="routeName" value={form.routeName} placeholder="Route name" readOnly />
             </label>
 
             <label>
               <div className="label">Destination</div>
-              <input name="destination" value={form.destination} onChange={handleChange} placeholder="Destination" />
+              <input name="destination" value={form.destination} placeholder="Destination" readOnly />
             </label>
 
             <label>
               <div className="label">Departure</div>
-              <input name="departure" value={form.departure} onChange={handleChange} placeholder="Departure" />
+              <input name="departure" value={form.departure} placeholder="Departure" readOnly />
             </label>
           </div>
         </section>
@@ -112,19 +189,31 @@ export default function TripAddPage() {
             <label>
               <div className="label">Status</div>
               <select name="status" value={form.status} onChange={handleChange}>
-                <option value="ACTIVE">Active</option>
-                <option value="PAUSED">Paused</option>
-                <option value="CANCELLED">Cancelled</option>
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="ONGOING">Ongoing</option>
+                <option value="FINISHED">Finished</option>
+                <option value="CANCELED">Canceled</option>
               </select>
             </label>
           </div>
         </section>
 
         <div className="form-actions">
-          <button type="submit" className="confirm">Confirm</button>
-          <button type="button" className="cancel" onClick={handleCancel}>Cancel</button>
+          <button type="submit" className="confirm" disabled={loading}>
+            {loading ? 'Creating...' : 'Confirm'}
+          </button>
+          <button type="button" className="cancel" onClick={handleCancel} disabled={loading}>
+            Cancel
+          </button>
         </div>
       </form>
+
+      {/* Choose Route Modal */}
+      <ChooseRouteModal
+        isOpen={showRouteModal}
+        onClose={() => setShowRouteModal(false)}
+        onSelectRoute={handleRouteSelect}
+      />
     </div>
   );
 }

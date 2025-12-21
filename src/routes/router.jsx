@@ -14,7 +14,11 @@ import StaffPage from '../pages/StaffPage/index.jsx';
 // import CustomersPage from '../pages/CustomersPage/index.jsx';
 import TripsPage from '../pages/TripsPage/index.jsx';
 import BookingsPage from '../pages/BookingsPage/index.jsx';
+import BookingDetailPage from '../pages/BookingDetailPage/index.jsx';
+import BookingAddPage from '../pages/BookingAddPage/index.jsx';
+import BookingEditPage from '../pages/BookingEditPage/index.jsx';
 import InvoicesPage from '../pages/InvoicesPage/index.jsx';
+import InvoiceDetailPage from '../pages/InvoiceDetailPage/index.jsx';
 import AttractionsPage from '../pages/AttractionsPage/index.jsx';
 import StatisticsPage from '../pages/StatisticsPage/index.jsx';
 import CustomerRouteDetailPage from '../pages/customer/RouteDetailPage/index.jsx';
@@ -131,7 +135,7 @@ export const router = createBrowserRouter([
   },
   {
     element: (
-      <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <ProtectedRoute allowedRoles={["ADMIN", "STAFF"]}>
         <AdminLayout />
       </ProtectedRoute>
     ),
@@ -169,8 +173,24 @@ export const router = createBrowserRouter([
         element: <BookingsPage />,
       },
       {
+        path: '/bookings/new',
+        element: <BookingAddPage />,
+      },
+      {
+        path: '/bookings/:id',
+        element: <BookingDetailPage />,
+      },
+      {
+        path: '/bookings/:id/edit',
+        element: <BookingEditPage />,
+      },
+      {
         path: '/invoices',
         element: <InvoicesPage />,
+      },
+      {
+        path: '/invoices/:id',
+        element: <InvoiceDetailPage />,
       },
       {
         path: '/attractions',

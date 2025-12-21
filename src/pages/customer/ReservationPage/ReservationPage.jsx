@@ -98,8 +98,14 @@ export default function ReservationPage() {
   };
 
   // Filter by search
+  // Show all bookings except PENDING ones without payment status (incomplete bookings still in cart)
   const visibleBookings = useMemo(() => {
-    return bookings.filter((b) => b.bookingStatus !== "PENDING");
+    return bookings.filter((b) => {
+      // Show all non-PENDING bookings (CONFIRMED, COMPLETED, CANCELED)
+      if (b.bookingStatus !== "PENDING") return true;
+      // For PENDING bookings, only show those ready for payment (displayStatus: PAYMENT)
+      return b.displayStatus === "PAYMENT";
+    });
   }, [bookings]);
 
   const filteredBookings = useMemo(() => {

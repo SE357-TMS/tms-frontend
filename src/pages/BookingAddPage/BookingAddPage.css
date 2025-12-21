@@ -1,0 +1,479 @@
+/* Booking Add Page - Route (not modal) */
+.booking-add-page {
+	position: relative;
+	width: 100%;
+	min-height: calc(100vh - 110px);
+	background: #ffffff;
+	padding: 40px 20px;
+}
+
+.booking-add-container {
+	position: relative;
+	width: 1195px;
+	max-width: 100%;
+	margin: 0 auto;
+	background: #ffffff;
+	border-radius: 20px;
+	padding: 66px 85px 78px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close Icon */
+.booking-add-close {
+	position: absolute;
+	right: 17px;
+	top: 17px;
+	width: 28px;
+	height: 28px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	transition: all 0.2s;
+}
+
+.booking-add-close:hover {
+	opacity: 0.7;
+}
+
+/* Title */
+.booking-add-title {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	font-size: 24px;
+	line-height: 16px;
+	text-align: center;
+	letter-spacing: 0.5px;
+	color: #4d40ca;
+	margin-bottom: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+}
+
+.booking-add-title svg,
+.booking-add-title img,
+.booking-add-title .booking-add-title-icon {
+	width: 28px;
+	height: 28px;
+	background: #0fbf00;
+	border: 0.5px solid #0fbf00;
+	border-radius: 5px;
+	padding: 5px;
+	display: inline-block;
+}
+
+/* Customer Information Section */
+.booking-section {
+	box-sizing: border-box;
+	background: #ffffff;
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	border-radius: 20px;
+	padding: 32px;
+	margin-bottom: 20px;
+	position: relative;
+	overflow: visible;
+}
+
+.booking-section-title {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 23px;
+	letter-spacing: 0.5px;
+	color: #000000;
+	margin-bottom: 28px;
+}
+
+/* Customer Info Grid */
+.customer-info-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+	align-items: start;
+}
+
+.customer-info-grid .booking-form-group.address {
+	grid-column: span 3;
+}
+
+/* Form Group */
+.booking-form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 11px;
+}
+
+.booking-form-group label {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 16px;
+	letter-spacing: 0.5px;
+	color: rgba(0, 0, 0, 0.7);
+}
+
+.booking-form-group input,
+.booking-form-group select {
+	box-sizing: border-box;
+	padding: 10px;
+	background: rgba(0, 0, 0, 0.02);
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 300;
+	font-size: 14px;
+	line-height: 16px;
+	letter-spacing: 0.5px;
+	color: rgba(0, 0, 0, 0.75);
+	height: 36px;
+}
+
+.booking-form-group input:focus,
+.booking-form-group select:focus {
+	outline: none;
+	border-color: #0b5da7;
+}
+
+/* Make form groups fill grid columns uniformly */
+.customer-info-grid .booking-form-group {
+	width: 100%;
+	max-width: 100%;
+}
+
+/* Ensure inputs and selects take full width of their form group */
+.booking-form-group input,
+.booking-form-group select,
+.traveler-select-btn,
+.customer-select-btn {
+	width: 100%;
+}
+
+/* Stronger overrides scoped to BookingAddPage to avoid conflicts with modal styles */
+.booking-add-page .customer-info-grid .booking-form-group {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+.booking-add-page .customer-select-wrapper {
+	display: block !important;
+}
+
+.booking-add-page .customer-select-btn,
+.booking-add-page .traveler-select-btn {
+	width: 100% !important;
+}
+
+/* Strongest-scoped overrides for Full Name field to counter other component CSS */
+.booking-add-page .booking-add-container .customer-info-grid .booking-form-group.name {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+.booking-add-page .booking-add-container .customer-info-grid .booking-form-group.name .customer-select-btn {
+	width: 100% !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+}
+
+.booking-add-page .booking-add-container .customer-info-grid .booking-form-group.name .customer-select-wrapper {
+	width: 100% !important;
+}
+
+/* Passenger Count Section */
+.passenger-count-section {
+	display: flex;
+	align-items: center;
+	gap: 27px;
+	margin-bottom: 51px;
+}
+
+.passenger-count-label {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 23px;
+	letter-spacing: 0.5px;
+	color: #000000;
+}
+
+.passenger-counter {
+	display: flex;
+	align-items: center;
+	padding: 2px;
+	gap: 12px;
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+	height: 29px;
+}
+
+.counter-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 17.44px;
+	height: 17.44px;
+	background: #ededed;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	color: #000000;
+	transition: all 0.2s;
+}
+
+.counter-btn:hover:not(:disabled) {
+	background: #d9d9d9;
+}
+
+.counter-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.counter-value {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 140%;
+	color: #000000;
+	min-width: 20px;
+	text-align: center;
+}
+
+/* Traveler Section */
+.traveler-section {
+	margin-bottom: 32px;
+}
+
+.traveler-title {
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	font-size: 15px;
+	line-height: 16px;
+	letter-spacing: 0.5px;
+	color: #000000;
+	margin-bottom: 16px;
+}
+
+.traveler-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 16px 32px;
+}
+
+/* Traveler Select with Dropdown */
+.traveler-select-wrapper,
+.customer-select-wrapper {
+	position: relative;
+}
+
+.traveler-select-btn,
+.customer-select-btn {
+	width: 100%;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	background: rgba(11, 93, 167, 0.1);
+	border: 0.5px solid #0b5da7;
+	border-radius: 5px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.traveler-select-btn:hover,
+.customer-select-btn:hover {
+	background: rgba(11, 93, 167, 0.15);
+}
+
+.traveler-select-btn svg,
+.customer-select-btn svg {
+	width: 24px;
+	height: 24px;
+	transform: rotate(-90deg);
+	transition: transform 0.2s;
+}
+
+.traveler-select-btn.open svg,
+.customer-select-btn.open svg {
+	transform: rotate(0deg);
+}
+
+/* Dropdown */
+.traveler-dropdown,
+.customer-dropdown {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	max-height: 180px;
+	overflow-y: auto;
+	background: #ffffff;
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	z-index: 1;
+}
+
+.traveler-dropdown-item,
+.customer-dropdown-item {
+	padding: 10px 15px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 14px;
+	color: #000000;
+	cursor: pointer;
+	transition: all 0.2s;
+	border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.traveler-dropdown-item:last-child,
+.customer-dropdown-item:last-child {
+	border-bottom: none;
+}
+
+.traveler-dropdown-item:hover,
+.customer-dropdown-item:hover {
+	background: #f6f6f6;
+}
+
+.traveler-dropdown-item.add-new {
+	background: rgba(11, 93, 167, 0.05);
+	border-bottom: 0.5px solid #0b5da7;
+}
+
+.customer-dropdown-item.selected {
+	background: #ebe4ff;
+	color: #4d40ca;
+}
+
+
+/* Footer Actions */
+.booking-add-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 13px;
+	margin-top: 20px;
+}
+
+.btn-booking-cancel,
+.btn-booking-confirm {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	width: 86px;
+	height: 42px;
+	border-radius: 10px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 140%;
+	cursor: pointer;
+	transition: all 0.2s;
+	border: 0.5px solid;
+}
+
+.btn-booking-cancel {
+	background: rgba(195, 65, 65, 0.1);
+	border-color: #c34141;
+	color: #c34141;
+}
+
+.btn-booking-cancel:hover {
+	background: rgba(195, 65, 65, 0.2);
+}
+
+.btn-booking-confirm {
+	background: rgba(15, 191, 0, 0.1);
+	border-color: #0fbf00;
+	color: #0fbf00;
+}
+
+.btn-booking-confirm:hover {
+	background: rgba(15, 191, 0, 0.2);
+}
+
+.btn-booking-confirm:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Error Message */
+.error-text {
+	font-family: 'Poppins', sans-serif;
+	font-size: 12px;
+	color: #ef4444;
+	margin-top: 4px;
+}
+
+/* Required Star */
+.required {
+	color: #ef4444;
+	margin-left: 2px;
+}
+
+/* Trip Select Section */
+.trip-select-section {
+	margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+	.booking-add-container {
+		width: 95%;
+		padding: 50px 40px 60px;
+	}
+
+	.customer-info-grid {
+		gap: 18px 50px;
+	}
+
+	.traveler-row {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	.booking-add-container {
+		padding: 40px 24px 50px;
+	}
+
+	.booking-add-title {
+		font-size: 20px;
+	}
+
+	.customer-info-grid,
+	.traveler-row {
+		grid-template-columns: 1fr;
+	}
+
+	.booking-form-group.name,
+	.booking-form-group.gender,
+	.booking-form-group.birthday,
+	.booking-form-group.email,
+	.booking-form-group.phone,
+	.booking-form-group.address {
+		width: 100%;
+	}
+
+	.booking-add-footer {
+		flex-direction: column-reverse;
+	}
+
+	.btn-booking-cancel,
+	.btn-booking-confirm {
+		width: 100%;
+	}
+}

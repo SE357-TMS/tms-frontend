@@ -209,9 +209,16 @@
 }
 
 .payment-page .tour-info-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+  /*
+    Important: Other pages define a global `.tour-info-grid` (e.g. BookingDetailPage)
+    which can unintentionally change layout here (flex-direction, margins, etc.).
+    Use an explicit grid to keep PaymentPage stable.
+  */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+  margin: 0;
 }
 
 .payment-page .tour-info-grid .tour-info-item {
@@ -221,7 +228,7 @@
   font-size: 14px;
   color: #6b7280;
   white-space: nowrap;
-  flex: 1 1 220px;
+  min-width: 0;
 }
 
 .payment-page .tour-info-grid .tour-info-item img {

@@ -1,0 +1,294 @@
+/* Invoice Detail Page */
+.invoice-detail-page {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+	padding-bottom: 30px;
+}
+
+/* Loading */
+.loading-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 400px;
+	gap: 20px;
+}
+
+.spinner {
+	width: 48px;
+	height: 48px;
+	border: 4px solid #f3f4f6;
+	border-top-color: #4d40ca;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.loading-container p {
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	color: #6b7280;
+}
+
+/* Info Card */
+.info-card {
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	padding: 24px;
+	position: relative;
+	background: white;
+}
+
+.card-title {
+	font-family: 'Poppins', sans-serif;
+	font-size: 18px;
+	font-weight: 600;
+	margin-bottom: 20px;
+	color: #000;
+}
+
+.edit-btn {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	border: 1px solid #0fbf00;
+	background: white;
+	color: #0fbf00;
+	padding: 7px;
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s;
+}
+
+.edit-btn:hover {
+	background: rgba(15, 191, 0, 0.1);
+}
+
+.edit-btn svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Grid Layout */
+.grid-row {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+.grid-row:last-child {
+	margin-bottom: 0;
+}
+
+.grid-col-3 {
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.field-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.field-group label {
+	font-family: 'Poppins', sans-serif;
+	font-size: 16px;
+	font-weight: 600;
+	color: rgba(0, 0, 0, 0.7);
+}
+
+.field-value {
+	background: rgba(0, 0, 0, 0.02);
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	padding: 10px 12px;
+	border-radius: 5px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.75);
+}
+
+.full-width {
+	grid-column: span 2;
+}
+
+/* Payment Section */
+.invoice-detail-page .payment-section {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 30px;
+}
+
+/* Payment Methods */
+.invoice-detail-page .payment-methods {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.invoice-detail-page .payment-option {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px;
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	cursor: pointer;
+	transition: all 0.2s;
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	color: #333;
+}
+
+.invoice-detail-page .payment-option:hover {
+	background: rgba(0, 0, 0, 0.02);
+}
+
+.invoice-detail-page .payment-option.active {
+	border-color: #4d40ca;
+	background: rgba(77, 64, 202, 0.05);
+}
+
+.invoice-detail-page .radio-circle {
+	width: 16px;
+	height: 16px;
+	border: 1px solid #4d40ca;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.invoice-detail-page .radio-inner {
+	width: 8px;
+	height: 8px;
+	background-color: #4d40ca;
+	border-radius: 50%;
+}
+
+.invoice-detail-page .btn-confirm {
+	background-color: #4d40ca;
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 5px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	font-size: 14px;
+	cursor: pointer;
+	width: 50%;
+	transition: all 0.2s;
+}
+
+.btn-confirm:hover {
+	background-color: #3d30ba;
+}
+
+/* Sub Table */
+.table-container {
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.sub-table-header {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0.5fr;
+	padding: 15px;
+	background: white;
+	border-bottom: 1px solid #000;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.sub-table-row {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0.5fr;
+	padding: 15px;
+	align-items: center;
+	border-bottom: 1px solid #ddd;
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	color: #333;
+}
+
+.sub-table-row:last-child {
+	border-bottom: none;
+}
+
+/* Cancel Order Button */
+.cancel-order-btn {
+	width: 100%;
+	padding: 15px;
+	background: white;
+	border: 1px solid #000;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	font-size: 14px;
+	margin-top: 30px;
+	border-radius: 5px;
+	cursor: pointer;
+	text-transform: uppercase;
+	transition: all 0.2s;
+}
+
+.cancel-order-btn:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+	.payment-section {
+		grid-template-columns: 1fr;
+	}
+
+	.grid-col-3 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.sub-table-header,
+	.sub-table-row {
+		grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0.5fr;
+		font-size: 13px;
+	}
+}
+
+@media (max-width: 768px) {
+	.grid-row {
+		grid-template-columns: 1fr;
+	}
+
+	.grid-col-3 {
+		grid-template-columns: 1fr;
+	}
+
+	.full-width {
+		grid-column: span 1;
+	}
+
+	.btn-confirm {
+		width: 100%;
+	}
+
+	.table-container {
+		overflow-x: auto;
+	}
+
+	.sub-table-header,
+	.sub-table-row {
+		min-width: 800px;
+	}
+}

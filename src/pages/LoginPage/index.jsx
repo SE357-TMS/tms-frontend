@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import authService from '../../services/authService';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -62,8 +63,18 @@ const LoginPage = () => {
       
       console.log('✅ Login successful!', result);
       
-      // Login successful, redirect to dashboard
-      navigate('/dashboard');
+      // Get user info to determine redirect path
+      const currentUser = authService.getCurrentUser();
+      console.log('👤 Current user:', currentUser);
+      
+      // Redirect based on user role
+      if (currentUser?.role === 'ADMIN' || currentUser?.role === 'STAFF') {
+        console.log('🔑 Admin/Staff detected, redirecting to dashboard');
+        navigate('/dashboard');
+      } else {
+        console.log('👥 Customer detected, redirecting to home');
+        navigate('/');
+      }
     } catch (error) {
       console.error('❌ Login error:', error);
       console.error('Response:', error.response);

@@ -187,11 +187,69 @@
 	margin-bottom: 32px;
 }
 
+.traveler-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.traveler-edit-note {
+	margin: 8px 0 20px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 13px;
+	color: rgba(0, 0, 0, 0.6);
+}
+
+.btn-traveler-add,
+.btn-traveler-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 12px;
+	border-radius: 8px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 14px;
+	border: 0.5px solid;
+	cursor: pointer;
+	transition: all 0.2s;
+	white-space: nowrap;
+}
+
+.btn-traveler-add {
+	background: rgba(77, 64, 202, 0.1);
+	border-color: #4d40ca;
+	color: #4d40ca;
+}
+
+.btn-traveler-add:hover {
+	background: rgba(77, 64, 202, 0.2);
+}
+
+.btn-traveler-remove {
+	background: rgba(195, 65, 65, 0.1);
+	border-color: #c34141;
+	color: #c34141;
+}
+
+.btn-traveler-remove:hover {
+	background: rgba(195, 65, 65, 0.2);
+}
+
+.btn-traveler-remove:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
 .traveler-section:last-child {
 	margin-bottom: 0;
 }
 
 .traveler-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	font-family: 'Poppins', sans-serif;
 	font-weight: 700;
 	font-size: 15px;
@@ -274,6 +332,83 @@
 .required {
 	color: #ef4444;
 	margin-left: 2px;
+}
+
+/* Traveler Select Wrapper - Dropdown like BookingAddPage */
+.traveler-select-wrapper {
+	position: relative;
+}
+
+.traveler-select-btn {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 36px 10px 12px;
+	background: rgba(0, 0, 0, 0.02);
+	border: 0.5px solid rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 16px;
+	letter-spacing: 0.5px;
+	color: rgba(0, 0, 0, 0.75);
+	height: 36px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	text-align: left;
+}
+
+.traveler-select-btn svg {
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	transition: transform 0.2s;
+}
+
+.traveler-select-btn.open svg {
+	transform: translateY(-50%) rotate(180deg);
+}
+
+.traveler-select-btn:hover {
+	border-color: #4d40ca;
+}
+
+.traveler-dropdown {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	max-height: 200px;
+	overflow-y: auto;
+	background: #ffffff;
+	border: 0.5px solid rgba(0, 0, 0, 0.3);
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 100;
+}
+
+.traveler-dropdown-item {
+	padding: 10px 12px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+
+.traveler-dropdown-item:hover {
+	background: rgba(77, 64, 202, 0.1);
+}
+
+.traveler-dropdown-item.add-new {
+	color: #4d40ca;
+	font-weight: 500;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive */

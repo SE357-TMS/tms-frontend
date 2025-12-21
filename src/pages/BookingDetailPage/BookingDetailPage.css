@@ -166,6 +166,11 @@
   transition: all 0.2s;
 }
 
+.edit-passenger-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .edit-passenger-btn:hover {
   background: #ebe4ff;
 }
@@ -198,6 +203,43 @@
   margin-top: 20px;
 }
 
+.booking-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-left: auto;
+  margin-top: 20px;
+}
+
+.edit-booking-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: 160px;
+  height: 36px;
+  background: rgba(77, 64, 202, 0.1);
+  border: 0.5px solid #4d40ca;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: #4d40ca;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-booking-btn:hover {
+  background: rgba(77, 64, 202, 0.2);
+}
+
+.edit-booking-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .view-invoice-btn:hover {
   background: #3d30ba;
 }
@@ -228,6 +270,11 @@
     display: none;
   }
 
+  .booking-detail-actions {
+    flex-direction: column;
+  }
+
+  .edit-booking-btn,
   .view-invoice-btn {
     width: 100%;
   }

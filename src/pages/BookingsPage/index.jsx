@@ -99,6 +99,19 @@ const BookingsPage = () => {
 			return;
 		}
 
+		// Rule: allow traveler edits if UNPAID or departure is > 3 days away
+		const daysToDeparture = Math.floor((departureDate - today) / (1000 * 60 * 60 * 24));
+		const isUnpaid = booking.invoice?.paymentStatus === "UNPAID";
+		if (!isUnpaid && daysToDeparture <= 3) {
+			Swal.fire({
+				icon: "warning",
+				title: "Cannot edit",
+				text: "Only unpaid bookings or trips departing in more than 3 days can edit travelers",
+				confirmButtonColor: "#4D40CA",
+			});
+			return;
+		}
+
 		// Navigate to edit page instead of modal
 		navigate(`/bookings/${booking.id}/edit`);
 	};

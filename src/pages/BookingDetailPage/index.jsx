@@ -75,7 +75,31 @@ const BookingDetailPage = () => {
 		}
 	};
 
+	const canEditTravelers = (() => {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const departure = booking?.departureDate
+			? new Date(`${booking.departureDate}T00:00:00`)
+			: null;
+		const daysToDeparture = departure
+			? Math.floor((departure - today) / (1000 * 60 * 60 * 24))
+			: 0;
+		const isUnpaid = booking?.invoice?.paymentStatus === "UNPAID";
+		const isDeparted = departure ? departure <= today : false;
+		const lockedStatus = booking?.status === "CANCELED" || booking?.status === "COMPLETED";
+		return !isDeparted && !lockedStatus && (isUnpaid || daysToDeparture > 3);
+	})();
+
 	const handleEditPassenger = (index) => {
+		if (!canEditTravelers) {
+			Swal.fire({
+				icon: "warning",
+				title: "Cannot edit",
+				text: "Travelers can be edited only when booking is unpaid or departure is more than 3 days away.",
+				confirmButtonColor: "#4D40CA",
+			});
+			return;
+		}
 		setSelectedPassengerIndex(index);
 		setShowEditPassengerModal(true);
 	};
@@ -195,6 +219,7 @@ const BookingDetailPage = () => {
 										<button
 											className="edit-passenger-btn"
 											onClick={() => handleEditPassenger(index)}
+											disabled={!canEditTravelers}
 										>
 											<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
 												<path
@@ -213,9 +238,18 @@ const BookingDetailPage = () => {
 					</div>
 
 					{/* View Invoice Button */}
-					<button className="view-invoice-btn" onClick={handleViewInvoice}>
-						View invoice information
-					</button>
+					<div className="booking-detail-actions">
+						<button
+							className="edit-booking-btn"
+							onClick={() => navigate(`/bookings/${booking.id}/edit`)}
+							disabled={!canEditTravelers}
+						>
+							Edit booking
+						</button>
+						<button className="view-invoice-btn" onClick={handleViewInvoice}>
+							View invoice information
+						</button>
+					</div>
 				</div>
 			</div>
 

@@ -14,6 +14,13 @@ const BookingEditPage = () => {
 	const [booking, setBooking] = useState(null);
 	const [status, setStatus] = useState("PENDING");
 	const [travelers, setTravelers] = useState([]);
+	const [canEditTravelers, setCanEditTravelers] = useState(false);
+	const [isPaid, setIsPaid] = useState(false);
+
+	// State for customers dropdown (like BookingAddPage)
+	const [customers, setCustomers] = useState([]);
+	const [loadingCustomers, setLoadingCustomers] = useState(false);
+	const [openTravelerDropdown, setOpenTravelerDropdown] = useState(null);
 
 	// State for loading and errors
 	const [loading, setLoading] = useState(true);
@@ -24,6 +31,24 @@ const BookingEditPage = () => {
 		setTitle("Edit Booking");
 		setSubtitle("Update booking information");
 	}, [setTitle, setSubtitle]);
+
+	// Fetch customers for dropdown
+	useEffect(() => {
+		const fetchCustomers = async () => {
+			try {
+				setLoadingCustomers(true);
+				const response = await api.get("/admin/users", {
+					params: { role: "CUSTOMER", size: 100 },
+				});
+				setCustomers(response.data.data?.items || []);
+			} catch (err) {
+				console.error("Error fetching customers:", err);
+			} finally {
+				setLoadingCustomers(false);
+			}
+		};
+		fetchCustomers();
+	}, []);
 
 	// Fetch booking details
 	useEffect(() => {
@@ -36,6 +61,24 @@ const BookingEditPage = () => {
 				setBooking(bookingData);
 				setStatus(bookingData.status || "PENDING");
 				
+				// Compute traveler edit permission
+				const today = new Date();
+				today.setHours(0, 0, 0, 0);
+				const departure = bookingData.departureDate
+					? new Date(`${bookingData.departureDate}T00:00:00`)
+					: null;
+				const daysToDeparture = departure
+					? Math.floor((departure - today) / (1000 * 60 * 60 * 24))
+					: 0;
+				const isUnpaid = bookingData.invoice?.paymentStatus === "UNPAID";
+				const paidStatus = bookingData.invoice?.paymentStatus === "PAID";
+				const isDeparted = departure ? departure <= today : false;
+				const lockedStatus =
+					bookingData.status === "CANCELED" || bookingData.status === "COMPLETED";
+				
+				setIsPaid(paidStatus);
+				setCanEditTravelers(!isDeparted && !lockedStatus && (isUnpaid || daysToDeparture > 3));
+
 				if (bookingData.travelers && bookingData.travelers.length > 0) {
 					setTravelers(
 						bookingData.travelers.map((t) => ({
@@ -44,6 +87,10 @@ const BookingEditPage = () => {
 							gender: t.gender || "M",
 							dateOfBirth: t.dateOfBirth || "",
 							identityDoc: t.identityDoc || "",
+							email: t.email || "",
+							phoneNumber: t.phoneNumber || "",
+							isFromDropdown: false,
+							selectedCustomerId: null,
 						}))
 					);
 				}
@@ -72,22 +119,74 @@ const BookingEditPage = () => {
 		newTravelers[index] = {
 			...newTravelers[index],
 			[field]: value,
+			isFromDropdown: false,
 		};
 		setTravelers(newTravelers);
+	};
+
+	// Handle traveler selection from dropdown (like BookingAddPage)
+	const handleTravelerSelect = (index, customer) => {
+		if (customer === "new") {
+			const newTravelers = [...travelers];
+			newTravelers[index] = createEmptyTraveler();
+			setTravelers(newTravelers);
+		} else {
+			const newTravelers = [...travelers];
+			newTravelers[index] = {
+				id: null,
+				fullName: customer.fullName,
+				gender: customer.gender || "M",
+				dateOfBirth: customer.birthday || "",
+				identityDoc: customer.identityDoc || "",
+				email: customer.email || "",
+				phoneNumber: customer.phoneNumber || "",
+				isFromDropdown: true,
+				selectedCustomerId: customer.id,
+			};
+			setTravelers(newTravelers);
+		}
+		setOpenTravelerDropdown(null);
+	};
+
+	const createEmptyTraveler = () => ({
+		id: null,
+		fullName: "",
+		gender: "M",
+		dateOfBirth: "",
+		identityDoc: "",
+		email: "",
+		phoneNumber: "",
+		isFromDropdown: false,
+		selectedCustomerId: null,
+	});
+
+	const handleAddTraveler = () => {
+		setTravelers((prev) => [...prev, createEmptyTraveler()]);
+	};
+
+	const handleRemoveTraveler = (index) => {
+		setTravelers((prev) => prev.filter((_, i) => i !== index));
 	};
 
 	// Validate form
 	const validate = () => {
 		const newErrors = {};
 
-		travelers.forEach((traveler, index) => {
-			if (!traveler.fullName.trim()) {
-				newErrors[`traveler_${index}_name`] = "Please enter full name";
-			}
-			if (!traveler.dateOfBirth) {
-				newErrors[`traveler_${index}_dob`] = "Please enter date of birth";
-			}
-		});
+		if (canEditTravelers) {
+			travelers.forEach((traveler, index) => {
+				if (!traveler.fullName.trim()) {
+					newErrors[`traveler_${index}_name`] = "Please enter full name";
+				}
+				if (!traveler.email?.trim()) {
+					newErrors[`traveler_${index}_email`] = "Please enter email";
+				} else if (!/^\S+@\S+\.\S+$/.test(traveler.email.trim())) {
+					newErrors[`traveler_${index}_email`] = "Invalid email";
+				}
+				if (!traveler.phoneNumber?.trim()) {
+					newErrors[`traveler_${index}_phone`] = "Please enter phone number";
+				}
+			});
+		}
 
 		return newErrors;
 	};
@@ -105,14 +204,17 @@ const BookingEditPage = () => {
 
 			const requestData = {
 				status: status,
-				travelers: travelers.map((t) => ({
-					id: t.id,
-					fullName: t.fullName,
-					gender: t.gender,
-					dateOfBirth: t.dateOfBirth,
-					identityDoc: t.identityDoc,
-				})),
 			};
+			if (canEditTravelers) {
+				requestData.travelers = travelers.map((t) => ({
+					fullName: t.fullName,
+					gender: t.gender || null,
+					dateOfBirth: t.dateOfBirth ? t.dateOfBirth : null,
+					identityDoc: t.identityDoc || null,
+					email: t.email?.trim() || null,
+					phoneNumber: t.phoneNumber?.trim() || null,
+				}));
+			}
 
 			await api.put(`/api/v1/tour-bookings/${id}`, requestData);
 
@@ -167,7 +269,8 @@ const BookingEditPage = () => {
 	if (!booking) {
 		return null;
 	}
-
+	// Check if can add/remove travelers (only when unpaid)
+	const canAddRemoveTravelers = canEditTravelers && !isPaid;
 	return (
 		<div className="booking-edit-page">
 			<div className="booking-edit-container">
@@ -253,65 +356,140 @@ const BookingEditPage = () => {
 						</div>
 					</div>
 
-					{/* Travelers Information - Editable */}
+					{/* Travelers Information - Editable with Dropdown */}
 					{travelers.length > 0 && (
 						<div className="booking-section">
-							<h3 className="booking-section-title">Traveler Information</h3>
+							<div className="traveler-header">
+								<h3 className="booking-section-title">Traveler Information</h3>
+								{canAddRemoveTravelers && (
+									<button type="button" className="btn-traveler-add" onClick={handleAddTraveler}>
+										Add traveler
+									</button>
+								)}
+							</div>
+							{!canEditTravelers && (
+								<p className="traveler-edit-note">
+									Travelers can be edited only when booking is unpaid or departure is more than 3 days away.
+								</p>
+							)}
+							{canEditTravelers && isPaid && (
+								<p className="traveler-edit-note" style={{ color: "#f39c12" }}>
+									Payment completed. You can update traveler details but cannot add or remove travelers.
+								</p>
+							)}
 							{travelers.map((traveler, index) => (
 								<div key={traveler.id || index} className="traveler-section">
-									<div className="traveler-title">Traveler {index + 1}:</div>
+									<div className="traveler-title">
+										<span>Traveler {index + 1}:</span>
+										{canAddRemoveTravelers && (
+											<button
+												type="button"
+												className="btn-traveler-remove"
+												onClick={() => handleRemoveTraveler(index)}
+												disabled={travelers.length <= 1}
+											>
+												Remove
+											</button>
+										)}
+									</div>
 									<div className="traveler-row">
-										{/* Name */}
+										{/* Name with dropdown (like BookingAddPage) */}
 										<div className="booking-form-group name-field">
 											<label>
 												Full Name <span className="required">*</span>
 											</label>
-											<input
-												type="text"
-												value={traveler.fullName}
-												onChange={(e) => handleTravelerChange(index, "fullName", e.target.value)}
-												placeholder="Enter full name"
-											/>
+											{canEditTravelers && canAddRemoveTravelers ? (
+												<>
+													<div className="traveler-select-wrapper">
+														<button
+															type="button"
+															className={`traveler-select-btn ${openTravelerDropdown === index ? "open" : ""}`}
+															onClick={() => setOpenTravelerDropdown(openTravelerDropdown === index ? null : index)}
+														>
+															<span>{traveler.fullName || "Search ..."}</span>
+															<svg viewBox="0 0 24 24" fill="none">
+																<path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+															</svg>
+														</button>
+														{openTravelerDropdown === index && (
+															<div className="traveler-dropdown">
+																<div className="traveler-dropdown-item add-new" onClick={() => handleTravelerSelect(index, "new")}>
+																	Add new traveler
+																</div>
+																{loadingCustomers ? (
+																	<div className="traveler-dropdown-item">Loading...</div>
+																) : (
+																	customers.map((customer) => (
+																		<div
+																			key={customer.id}
+																			className="traveler-dropdown-item"
+																			onClick={() => handleTravelerSelect(index, customer)}
+																		>
+																			{customer.fullName}
+																		</div>
+																	))
+																)}
+															</div>
+														)}
+													</div>
+													{!traveler.isFromDropdown && (
+														<input
+															type="text"
+															value={traveler.fullName}
+															onChange={(e) => handleTravelerChange(index, "fullName", e.target.value)}
+															placeholder="Enter full name"
+															style={{ marginTop: "8px" }}
+														/>
+													)}
+												</>
+											) : (
+												<input
+													type="text"
+													value={traveler.fullName}
+													onChange={(e) => handleTravelerChange(index, "fullName", e.target.value)}
+													placeholder="Enter full name"
+													disabled={!canEditTravelers}
+												/>
+											)}
 											{errors[`traveler_${index}_name`] && (
 												<span className="error-text">{errors[`traveler_${index}_name`]}</span>
 											)}
 										</div>
 
-										{/* Gender */}
-										<div className="booking-form-group">
-											<label>Gender</label>
-											<select value={traveler.gender} onChange={(e) => handleTravelerChange(index, "gender", e.target.value)}>
-												<option value="M">Male</option>
-												<option value="F">Female</option>
-												<option value="O">Other</option>
-											</select>
-										</div>
-
-										{/* Date of Birth */}
+										{/* Email */}
 										<div className="booking-form-group">
 											<label>
-												Date of Birth <span className="required">*</span>
+												Email <span className="required">*</span>
 											</label>
 											<input
-												type="date"
-												value={traveler.dateOfBirth}
-												onChange={(e) => handleTravelerChange(index, "dateOfBirth", e.target.value)}
+												type="email"
+												value={traveler.email}
+												onChange={(e) => handleTravelerChange(index, "email", e.target.value)}
+												placeholder="Example@gmail.com"
+												disabled={!canEditTravelers}
+												readOnly={traveler.isFromDropdown && canAddRemoveTravelers}
 											/>
-											{errors[`traveler_${index}_dob`] && <span className="error-text">{errors[`traveler_${index}_dob`]}</span>}
+											{errors[`traveler_${index}_email`] && (
+												<span className="error-text">{errors[`traveler_${index}_email`]}</span>
+											)}
 										</div>
 
-										{/* Identity Doc */}
+										{/* Phone */}
 										<div className="booking-form-group">
 											<label>
-												ID/Passport <span className="required">*</span>
+												Phone Number <span className="required">*</span>
 											</label>
 											<input
 												type="text"
-												value={traveler.identityDoc}
-												onChange={(e) => handleTravelerChange(index, "identityDoc", e.target.value)}
-												placeholder="ID/Passport number"
+												value={traveler.phoneNumber}
+												onChange={(e) => handleTravelerChange(index, "phoneNumber", e.target.value)}
+												placeholder="Phone Number"
+												disabled={!canEditTravelers}
+												readOnly={traveler.isFromDropdown && canAddRemoveTravelers}
 											/>
-											{errors[`traveler_${index}_doc`] && <span className="error-text">{errors[`traveler_${index}_doc`]}</span>}
+											{errors[`traveler_${index}_phone`] && (
+												<span className="error-text">{errors[`traveler_${index}_phone`]}</span>
+											)}
 										</div>
 									</div>
 								</div>

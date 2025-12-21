@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { AdminTitleContext } from "../../layouts/adminLayout/AdminLayout/AdminTitleContext";
 import "./BookingsPage.css";
 import api from "../../lib/httpHandler";
-import BookingAddModal from "./BookingAddModal";
 import BookingDetailModal from "./BookingDetailModal";
-import BookingEditModal from "./BookingEditModal";
 import viewIcon from "../../assets/icons/view.svg";
 
 const BookingsPage = () => {
 	const { setTitle, setSubtitle } = useContext(AdminTitleContext);
+	const navigate = useNavigate();
 
 	// State for bookings list
 	const [bookingsList, setBookingsList] = useState([]);
@@ -25,9 +25,7 @@ const BookingsPage = () => {
 
 	// Modal states
 	const [selectedBooking, setSelectedBooking] = useState(null);
-	const [showAddModal, setShowAddModal] = useState(false);
 	const [showDetailModal, setShowDetailModal] = useState(false);
-	const [showEditModal, setShowEditModal] = useState(false);
 
 	// Set page title
 	useEffect(() => {
@@ -70,19 +68,8 @@ const BookingsPage = () => {
 
 	// Handle view details
 	const handleViewDetails = async (bookingId) => {
-		try {
-			const response = await api.get(`/api/v1/tour-bookings/${bookingId}`);
-			setSelectedBooking(response.data.data);
-			setShowDetailModal(true);
-		} catch (err) {
-			console.error("Error fetching booking details:", err);
-			Swal.fire({
-				icon: "error",
-				title: "Error",
-				text: "Unable to load booking details",
-				confirmButtonColor: "#4D40CA",
-			});
-		}
+		// Navigate to booking detail page instead of modal
+		navigate(`/bookings/${bookingId}`);
 	};
 
 	// Handle edit booking (only for pre-departure)
@@ -112,9 +99,8 @@ const BookingsPage = () => {
 			return;
 		}
 
-		setSelectedBooking(booking);
-		setShowDetailModal(false);
-		setShowEditModal(true);
+		// Navigate to edit page instead of modal
+		navigate(`/bookings/${booking.id}/edit`);
 	};
 
 	// Handle cancel booking
@@ -278,7 +264,7 @@ const BookingsPage = () => {
 
 				<button
 					className="btn-add-booking"
-					onClick={() => setShowAddModal(true)}
+					onClick={() => navigate("/bookings/new")}
 				>
 					<svg width="25" height="25" viewBox="0 0 25 25" fill="none">
 						<path
@@ -508,33 +494,12 @@ const BookingsPage = () => {
 			</div>
 
 			{/* Modals */}
-			{showAddModal && (
-				<BookingAddModal
-					onClose={() => setShowAddModal(false)}
-					onSave={() => {
-						setShowAddModal(false);
-						fetchBookings();
-					}}
-				/>
-			)}
-
 			{showDetailModal && selectedBooking && (
 				<BookingDetailModal
 					booking={selectedBooking}
 					onClose={() => setShowDetailModal(false)}
 					onEdit={() => handleEditBooking(selectedBooking)}
 					canEdit={canEditBooking(selectedBooking)}
-				/>
-			)}
-
-			{showEditModal && selectedBooking && (
-				<BookingEditModal
-					booking={selectedBooking}
-					onClose={() => setShowEditModal(false)}
-					onSave={() => {
-						setShowEditModal(false);
-						fetchBookings();
-					}}
 				/>
 			)}
 		</div>

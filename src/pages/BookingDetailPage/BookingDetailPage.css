@@ -1,0 +1,234 @@
+.booking-detail-page {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 110px);
+  background: #ffffff;
+}
+
+.booking-detail-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.booking-detail-container {
+  position: relative;
+  max-width: 1065px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.booking-detail-content {
+  position: relative;
+  background: #ffffff;
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 40px;
+}
+
+/* Tour Name */
+.tour-name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 23px;
+  letter-spacing: 0.5px;
+  color: #000000;
+  margin-bottom: 30px;
+}
+
+/* Tour Info Grid */
+.tour-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.info-item label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.info-item .info-value {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: rgba(0, 0, 0, 0.75);
+  min-height: 36px;
+}
+
+/* Passenger Section */
+.passenger-section {
+  margin-bottom: 40px;
+}
+
+.passenger-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: #000000;
+  margin-bottom: 24px;
+}
+
+.passenger-table {
+  border: 0.5px solid #000000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.passenger-table-header {
+  display: grid;
+  grid-template-columns: 60px 1.5fr 1.2fr 1.5fr 100px;
+  background: #ffffff;
+  border-bottom: 0.5px solid #000000;
+  padding: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.passenger-table-row {
+  display: grid;
+  grid-template-columns: 60px 1.5fr 1.2fr 1.5fr 100px;
+  background: #ffffff;
+  border-bottom: 0.5px solid #000000;
+  padding: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 140%;
+  color: #000000;
+  align-items: center;
+}
+
+.passenger-table-row:last-child {
+  border-bottom: none;
+  border-radius: 0 0 10px 10px;
+}
+
+.col-no,
+.col-name,
+.col-phone,
+.col-email,
+.col-edit {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.col-edit {
+  justify-content: center;
+}
+
+.edit-passenger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: #f6f6f6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-passenger-btn:hover {
+  background: #ebe4ff;
+}
+
+.edit-passenger-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* View Invoice Button */
+.view-invoice-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: 261px;
+  height: 36px;
+  background: #4d40ca;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+  margin-top: 20px;
+}
+
+.view-invoice-btn:hover {
+  background: #3d30ba;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .info-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-detail-content {
+    padding: 24px;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .passenger-table-header,
+  .passenger-table-row {
+    grid-template-columns: 40px 1fr 100px 120px 60px;
+    font-size: 12px;
+  }
+
+  .col-email {
+    display: none;
+  }
+
+  .view-invoice-btn {
+    width: 100%;
+  }
+}

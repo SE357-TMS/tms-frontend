@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
+import { AdminTitleContext } from "../../layouts/adminLayout/AdminLayout/AdminTitleContext";
 import Swal from "sweetalert2";
-import "./BookingAddModal.css";
 import api from "../../lib/httpHandler";
+import "./BookingAddPage.css";
+import AddNewIcon from "../../assets/icons/addnew.svg";
 
-const BookingAddModal = ({ onClose, onSave }) => {
+const BookingAddPage = () => {
+	const navigate = useNavigate();
+	const { setTitle, setSubtitle } = useContext(AdminTitleContext);
+
 	// State for form data
 	const [selectedTrip, setSelectedTrip] = useState("");
 	const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -20,12 +27,21 @@ const BookingAddModal = ({ onClose, onSave }) => {
 	const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
 	const [customerSearchText, setCustomerSearchText] = useState("");
 
+	// Portal positioning for customer dropdown
+	const customerBtnRef = useRef(null);
+	const [customerDropdownStyle, setCustomerDropdownStyle] = useState(null);
+
 	// State for traveler dropdowns
 	const [openTravelerDropdown, setOpenTravelerDropdown] = useState(null);
 
 	// State for submission
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState({});
+
+	useEffect(() => {
+		setTitle("Add New Booking");
+		setSubtitle("Create a new tour booking");
+	}, [setTitle, setSubtitle]);
 
 	// Create empty traveler object
 	function createEmptyTraveler() {
@@ -45,9 +61,10 @@ const BookingAddModal = ({ onClose, onSave }) => {
 			try {
 				setLoadingTrips(true);
 				const response = await api.get("/api/v1/trips/all");
-				// Filter only OPEN trips with available seats
-				const openTrips = (response.data.data || []).filter(
-					(trip) => trip.status === "OPEN" && trip.availableSeats > 0
+				console.log("Trips response:", response.data);
+				const allTrips = response.data.data || [];
+				const openTrips = allTrips.filter(
+					(trip) => trip.status === "SCHEDULED" && (trip.availableSeats || 0) > 0
 				);
 				setTrips(openTrips);
 			} catch (err) {
@@ -67,7 +84,8 @@ const BookingAddModal = ({ onClose, onSave }) => {
 				const response = await api.get("/admin/users", {
 					params: { role: "CUSTOMER", size: 100 },
 				});
-				setCustomers(response.data.data?.content || []);
+				console.log("Customers response:", response.data);
+				setCustomers(response.data.data?.items || []);
 			} catch (err) {
 				console.error("Error fetching customers:", err);
 			} finally {
@@ -84,10 +102,8 @@ const BookingAddModal = ({ onClose, onSave }) => {
 			setPassengerCount(newCount);
 
 			if (delta > 0) {
-				// Add new traveler
 				setTravelers([...travelers, createEmptyTraveler()]);
 			} else {
-				// Remove last traveler
 				setTravelers(travelers.slice(0, -1));
 			}
 		}
@@ -114,12 +130,10 @@ const BookingAddModal = ({ onClose, onSave }) => {
 	// Handle traveler selection from dropdown
 	const handleTravelerSelect = (index, customer) => {
 		if (customer === "new") {
-			// Create new traveler manually
 			const newTravelers = [...travelers];
 			newTravelers[index] = createEmptyTraveler();
 			setTravelers(newTravelers);
 		} else {
-			// Select existing customer as traveler
 			const newTravelers = [...travelers];
 			newTravelers[index] = {
 				fullName: customer.fullName,
@@ -194,7 +208,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 				confirmButtonColor: "#4D40CA",
 			});
 
-			onSave();
+			navigate("/bookings");
 		} catch (err) {
 			console.error("Error creating booking:", err);
 			await Swal.fire({
@@ -219,17 +233,10 @@ const BookingAddModal = ({ onClose, onSave }) => {
 	const selectedTripInfo = trips.find((t) => t.id === selectedTrip);
 
 	return (
-		<div className="booking-modal-overlay" onClick={onClose}>
-			<div
-				className="booking-modal-container booking-add-modal"
-				onClick={(e) => e.stopPropagation()}
-			>
-				{/* Header */}
-				<button
-					className="booking-modal-close"
-					onClick={onClose}
-					aria-label="Close"
-				>
+		<div className="booking-add-page">
+			<div className="booking-add-container">
+				{/* Close Button */}
+				<button className="booking-add-close" onClick={() => navigate("/bookings")}>
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none">
 						<path
 							d="M18 6L6 18M6 6L18 18"
@@ -240,42 +247,27 @@ const BookingAddModal = ({ onClose, onSave }) => {
 						/>
 					</svg>
 				</button>
-				
-				<h2 className="booking-modal-title">
-					<svg viewBox="0 0 24 24" fill="none">
-						<path
-							d="M5 13L9 17L19 7"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</svg>
+
+				{/* Title */}
+				<h2 className="booking-add-title">
+					<img src={AddNewIcon} alt="Add new" className="booking-add-title-icon" />
 					Add new booking
 				</h2>
 
 				{/* Body */}
-				<div className="booking-modal-body">
+				<div className="booking-add-body">
 					{/* Trip Selection */}
 					<div className="trip-select-section">
-						<div
-							className="booking-form-group"
-							style={{ width: "100%", maxWidth: "500px" }}
-						>
+						<div className="booking-form-group" style={{ width: "100%", maxWidth: "500px" }}>
 							<label>
 								Select Trip <span className="required">*</span>
 							</label>
-							<select
-								value={selectedTrip}
-								onChange={(e) => setSelectedTrip(e.target.value)}
-								disabled={loadingTrips}
-							>
+							<select value={selectedTrip} onChange={(e) => setSelectedTrip(e.target.value)} disabled={loadingTrips}>
 								<option value="">-- Select a trip --</option>
 								{trips.map((trip) => (
 									<option key={trip.id} value={trip.id}>
-										{trip.routeName} -{" "}
-										{new Date(trip.departureDate).toLocaleDateString("en-GB")} (
-										{trip.availableSeats} seats available)
+										{trip.routeName} - {new Date(trip.departureDate).toLocaleDateString("en-GB")} ({trip.availableSeats} seats
+										available)
 									</option>
 								))}
 							</select>
@@ -293,48 +285,64 @@ const BookingAddModal = ({ onClose, onSave }) => {
 								<div className="customer-select-wrapper">
 									<button
 										type="button"
-										className={`customer-select-btn ${
-											showCustomerDropdown ? "open" : ""
-										}`}
-										onClick={() =>
-											setShowCustomerDropdown(!showCustomerDropdown)
-										}
+										ref={customerBtnRef}
+										className={`customer-select-btn ${showCustomerDropdown ? "open" : ""}`}
+										onClick={() => {
+											if (showCustomerDropdown) {
+												setShowCustomerDropdown(false);
+												setCustomerDropdownStyle(null);
+											} else {
+												const rect = customerBtnRef.current.getBoundingClientRect();
+												setCustomerDropdownStyle({
+													left: rect.left + window.scrollX,
+													top: rect.bottom + window.scrollY,
+													width: rect.width,
+												});
+												setShowCustomerDropdown(true);
+											}
+										}}
 									>
 										<span>{selectedCustomer?.fullName || "Full Name"}</span>
 										<svg viewBox="0 0 24 24" fill="none">
-											<path
-												d="M6 9L12 15L18 9"
-												stroke="currentColor"
-												strokeWidth="2"
-												strokeLinecap="round"
-											/>
+											<path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
 										</svg>
 									</button>
-									{showCustomerDropdown && (
-										<div className="customer-dropdown">
-											{loadingCustomers ? (
-												<div className="customer-dropdown-item">Loading...</div>
-											) : (
-												filteredCustomers.map((customer) => (
-													<div
-														key={customer.id}
-														className={`customer-dropdown-item ${
-															selectedCustomer?.id === customer.id
-																? "selected"
-																: ""
-														}`}
-														onClick={() => handleCustomerSelect(customer)}
-													>
-														{customer.fullName}
-													</div>
-												))
-											)}
-										</div>
-									)}
 								</div>
-								{errors.customer && (
-									<span className="error-text">{errors.customer}</span>
+
+								{showCustomerDropdown && customerDropdownStyle && createPortal(
+									<div
+										className="customer-dropdown portal"
+										style={{
+											position: "absolute",
+											left: customerDropdownStyle.left + "px",
+											top: customerDropdownStyle.top + "px",
+											width: customerDropdownStyle.width + "px",
+											zIndex: 1000,
+										}}
+									>
+										{loadingCustomers ? (
+											<div className="customer-dropdown-item">Loading...</div>
+										) : customers.length === 0 ? (
+											<div className="customer-dropdown-item">No customers found</div>
+										) : (
+											customers.map((customer) => (
+												<div
+													key={customer.id}
+													className={`customer-dropdown-item ${selectedCustomer?.id === customer.id ? "selected" : ""}`}
+													onClick={() => {
+													handleCustomerSelect(customer);
+													setShowCustomerDropdown(false);
+													setCustomerDropdownStyle(null);
+												}}
+												>
+													{customer.fullName}
+												</div>
+											))
+										)}
+									</div>,
+									document.body
 								)}
+								{errors.customer && <span className="error-text">{errors.customer}</span>}
 							</div>
 
 							{/* Gender - Read Only */}
@@ -356,41 +364,25 @@ const BookingAddModal = ({ onClose, onSave }) => {
 							{/* Birthday - Read Only */}
 							<div className="booking-form-group birthday">
 								<label>Date of Birth</label>
-								<input
-									type="text"
-									value={selectedCustomer?.birthday || "Date of Birth"}
-									readOnly
-								/>
+								<input type="text" value={selectedCustomer?.birthday || "Date of Birth"} readOnly />
 							</div>
 
 							{/* Email - Read Only */}
 							<div className="booking-form-group email">
 								<label>Email</label>
-								<input
-									type="text"
-									value={selectedCustomer?.email || "Email"}
-									readOnly
-								/>
+								<input type="text" value={selectedCustomer?.email || "Email"} readOnly />
 							</div>
 
 							{/* Phone - Read Only */}
 							<div className="booking-form-group phone">
 								<label>Phone Number</label>
-								<input
-									type="text"
-									value={selectedCustomer?.phoneNumber || "Phone Number"}
-									readOnly
-								/>
+								<input type="text" value={selectedCustomer?.phoneNumber || "Phone Number"} readOnly />
 							</div>
 
 							{/* Address - Read Only */}
 							<div className="booking-form-group address">
 								<label>Address</label>
-								<input
-									type="text"
-									value={selectedCustomer?.address || "Address"}
-									readOnly
-								/>
+								<input type="text" value={selectedCustomer?.address || "Address"} readOnly />
 							</div>
 						</div>
 					</div>
@@ -399,9 +391,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 					<div className="booking-section">
 						{/* Passenger Count */}
 						<div className="passenger-count-section">
-							<span className="passenger-count-label">
-								Number of Passengers:
-							</span>
+							<span className="passenger-count-label">Number of Passengers:</span>
 							<div className="passenger-counter">
 								<button
 									type="button"
@@ -416,11 +406,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 									type="button"
 									className="counter-btn"
 									onClick={() => handlePassengerCountChange(1)}
-									disabled={
-										passengerCount >= 10 ||
-										(selectedTripInfo &&
-											passengerCount >= selectedTripInfo.availableSeats)
-									}
+									disabled={passengerCount >= 10 || (selectedTripInfo && passengerCount >= selectedTripInfo.availableSeats)}
 								>
 									+
 								</button>
@@ -432,9 +418,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 						{/* Travelers */}
 						{travelers.map((traveler, index) => (
 							<div key={index} className="traveler-section">
-								<div className="traveler-title">
-									Traveler {index + 1} Information:
-								</div>
+								<div className="traveler-title">Traveler {index + 1} Information:</div>
 								<div className="traveler-row">
 									{/* Name with dropdown */}
 									<div className="booking-form-group name-field">
@@ -444,40 +428,24 @@ const BookingAddModal = ({ onClose, onSave }) => {
 										<div className="traveler-select-wrapper">
 											<button
 												type="button"
-												className={`traveler-select-btn ${
-													openTravelerDropdown === index ? "open" : ""
-												}`}
-												onClick={() =>
-													setOpenTravelerDropdown(
-														openTravelerDropdown === index ? null : index
-													)
-												}
+												className={`traveler-select-btn ${openTravelerDropdown === index ? "open" : ""}`}
+												onClick={() => setOpenTravelerDropdown(openTravelerDropdown === index ? null : index)}
 											>
 												<span>{traveler.fullName || "Search ..."}</span>
 												<svg viewBox="0 0 24 24" fill="none">
-													<path
-														d="M6 9L12 15L18 9"
-														stroke="currentColor"
-														strokeWidth="2"
-														strokeLinecap="round"
-													/>
+													<path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
 												</svg>
 											</button>
 											{openTravelerDropdown === index && (
 												<div className="traveler-dropdown">
-													<div
-														className="traveler-dropdown-item add-new"
-														onClick={() => handleTravelerSelect(index, "new")}
-													>
+													<div className="traveler-dropdown-item add-new" onClick={() => handleTravelerSelect(index, "new")}>
 														Add new traveler
 													</div>
 													{customers.map((customer) => (
 														<div
 															key={customer.id}
 															className="traveler-dropdown-item"
-															onClick={() =>
-																handleTravelerSelect(index, customer)
-															}
+															onClick={() => handleTravelerSelect(index, customer)}
 														>
 															{customer.fullName}
 														</div>
@@ -489,22 +457,12 @@ const BookingAddModal = ({ onClose, onSave }) => {
 											<input
 												type="text"
 												value={traveler.fullName}
-												onChange={(e) =>
-													handleTravelerChange(
-														index,
-														"fullName",
-														e.target.value
-													)
-												}
+												onChange={(e) => handleTravelerChange(index, "fullName", e.target.value)}
 												placeholder="Enter full name"
 												style={{ marginTop: "8px" }}
 											/>
 										)}
-										{errors[`traveler_${index}_name`] && (
-											<span className="error-text">
-												{errors[`traveler_${index}_name`]}
-											</span>
-										)}
+										{errors[`traveler_${index}_name`] && <span className="error-text">{errors[`traveler_${index}_name`]}</span>}
 									</div>
 
 									{/* Email */}
@@ -516,11 +474,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 											type="email"
 											placeholder="Example@gmail.com"
 											value={
-												traveler.isFromDropdown
-													? customers.find(
-															(c) => c.id === traveler.selectedCustomerId
-													  )?.email || ""
-													: ""
+												traveler.isFromDropdown ? customers.find((c) => c.id === traveler.selectedCustomerId)?.email || "" : ""
 											}
 											readOnly={traveler.isFromDropdown}
 										/>
@@ -535,60 +489,10 @@ const BookingAddModal = ({ onClose, onSave }) => {
 											type="text"
 											placeholder="Phone Number"
 											value={traveler.identityDoc}
-											onChange={(e) =>
-												handleTravelerChange(
-													index,
-													"identityDoc",
-													e.target.value
-												)
-											}
+											onChange={(e) => handleTravelerChange(index, "identityDoc", e.target.value)}
 											readOnly={traveler.isFromDropdown}
 										/>
-										{errors[`traveler_${index}_doc`] && (
-											<span className="error-text">
-												{errors[`traveler_${index}_doc`]}
-											</span>
-										)}
-									</div>
-
-									{/* Gender */}
-									<div className="booking-form-group">
-										<label>Gender</label>
-										<select
-											value={traveler.gender}
-											onChange={(e) =>
-												handleTravelerChange(index, "gender", e.target.value)
-											}
-											disabled={traveler.isFromDropdown}
-										>
-											<option value="M">Male</option>
-											<option value="F">Female</option>
-											<option value="O">Other</option>
-										</select>
-									</div>
-
-									{/* Date of Birth */}
-									<div className="booking-form-group">
-										<label>
-											Date of Birth <span className="required">*</span>
-										</label>
-										<input
-											type="date"
-											value={traveler.dateOfBirth}
-											onChange={(e) =>
-												handleTravelerChange(
-													index,
-													"dateOfBirth",
-													e.target.value
-												)
-											}
-											disabled={traveler.isFromDropdown}
-										/>
-										{errors[`traveler_${index}_dob`] && (
-											<span className="error-text">
-												{errors[`traveler_${index}_dob`]}
-											</span>
-										)}
+										{errors[`traveler_${index}_doc`] && <span className="error-text">{errors[`traveler_${index}_doc`]}</span>}
 									</div>
 								</div>
 							</div>
@@ -597,20 +501,11 @@ const BookingAddModal = ({ onClose, onSave }) => {
 				</div>
 
 				{/* Footer */}
-				<div className="booking-modal-footer">
-					<button
-						type="button"
-						className="btn-booking-cancel"
-						onClick={onClose}
-					>
+				<div className="booking-add-footer">
+					<button type="button" className="btn-booking-cancel" onClick={() => navigate("/bookings")}>
 						Cancel
 					</button>
-					<button
-						type="button"
-						className="btn-booking-confirm"
-						onClick={handleSubmit}
-						disabled={loading}
-					>
+					<button type="button" className="btn-booking-confirm" onClick={handleSubmit} disabled={loading}>
 						{loading ? "Processing..." : "Confirm"}
 					</button>
 				</div>
@@ -619,4 +514,4 @@ const BookingAddModal = ({ onClose, onSave }) => {
 	);
 };
 
-export default BookingAddModal;
+export default BookingAddPage;

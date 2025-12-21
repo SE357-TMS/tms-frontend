@@ -267,11 +267,11 @@
   letter-spacing: 0.5px;
 }
 
-.form-group {
+.route-detail-page .form-group {
   margin-bottom: 16px;
 }
 
-.form-group label {
+.route-detail-page .form-group label {
   display: block;
   font-family: "Inter", sans-serif;
   font-size: 14px;

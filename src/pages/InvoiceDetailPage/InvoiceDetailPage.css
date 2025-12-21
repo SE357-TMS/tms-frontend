@@ -123,21 +123,21 @@
 }
 
 /* Payment Section */
-.payment-section {
+.invoice-detail-page .payment-section {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 30px;
 }
 
 /* Payment Methods */
-.payment-methods {
+.invoice-detail-page .payment-methods {
 	display: flex;
 	flex-direction: column;
 	gap: 15px;
 	margin-bottom: 20px;
 }
 
-.payment-option {
+.invoice-detail-page .payment-option {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -151,16 +151,16 @@
 	color: #333;
 }
 
-.payment-option:hover {
+.invoice-detail-page .payment-option:hover {
 	background: rgba(0, 0, 0, 0.02);
 }
 
-.payment-option.active {
+.invoice-detail-page .payment-option.active {
 	border-color: #4d40ca;
 	background: rgba(77, 64, 202, 0.05);
 }
 
-.radio-circle {
+.invoice-detail-page .radio-circle {
 	width: 16px;
 	height: 16px;
 	border: 1px solid #4d40ca;
@@ -170,14 +170,14 @@
 	justify-content: center;
 }
 
-.radio-inner {
+.invoice-detail-page .radio-inner {
 	width: 8px;
 	height: 8px;
 	background-color: #4d40ca;
 	border-radius: 50%;
 }
 
-.btn-confirm {
+.invoice-detail-page .btn-confirm {
 	background-color: #4d40ca;
 	color: white;
 	border: none;

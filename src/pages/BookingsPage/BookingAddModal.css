@@ -153,6 +153,11 @@
 	height: 36px;
 }
 
+.booking-form-group input,
+.booking-form-group select {
+	width: 100%;
+}
+
 .booking-form-group input:focus,
 .booking-form-group select:focus {
 	outline: none;
@@ -182,6 +187,13 @@
 
 .booking-form-group.address {
 	width: 355px;
+}
+
+/* Trip Information Grid */
+.trip-info-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px 104px;
 }
 
 /* Passenger Count Section */
@@ -440,10 +452,6 @@
 }
 
 /* Trip Select Section */
-.trip-select-section {
-	margin-bottom: 20px;
-}
-
 /* Responsive */
 @media (max-width: 1200px) {
 	.booking-add-modal {

@@ -101,6 +101,13 @@
 	grid-column: span 3;
 }
 
+/* Trip Information Grid */
+.trip-info-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+}
+
 /* Form Group */
 .booking-form-group {
 	display: flex;
@@ -443,11 +450,6 @@
 .required {
 	color: #ef4444;
 	margin-left: 2px;
-}
-
-/* Trip Select Section */
-.trip-select-section {
-	margin-bottom: 20px;
 }
 
 /* Responsive */

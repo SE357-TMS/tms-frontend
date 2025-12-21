@@ -112,14 +112,20 @@ const BookingDetailPage = () => {
 
 	const handleViewInvoice = async () => {
 		try {
+			if (!booking?.id) return;
 			const response = await api.get(`/api/v1/invoices/booking/${booking.id}`);
-			// Navigate to invoice page or show invoice details
-			Swal.fire({
-				icon: "success",
-				title: "Invoice",
-				text: "Invoice loaded successfully",
-				confirmButtonColor: "#4D40CA",
-			});
+			const invoiceData = response?.data?.data ?? response?.data;
+			const invoiceId = invoiceData?.id;
+			if (!invoiceId) {
+				await Swal.fire({
+					icon: "error",
+					title: "Error",
+					text: "Could not determine invoice id for this booking",
+					confirmButtonColor: "#4D40CA",
+				});
+				return;
+			}
+			navigate(`/invoices/${invoiceId}`);
 		} catch (err) {
 			console.error("Error fetching invoice:", err);
 			if (err.response?.status === 404) {
@@ -127,6 +133,13 @@ const BookingDetailPage = () => {
 					icon: "info",
 					title: "No Invoice",
 					text: "No invoice found for this booking",
+					confirmButtonColor: "#4D40CA",
+				});
+			} else {
+				Swal.fire({
+					icon: "error",
+					title: "Error",
+					text: "Could not load invoice",
 					confirmButtonColor: "#4D40CA",
 				});
 			}

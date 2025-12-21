@@ -26,6 +26,15 @@ const BookingAddModal = ({ onClose, onSave }) => {
 	// State for submission
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState({});
+	// State for trip details display
+	const [tripDetails, setTripDetails] = useState({
+		departureDate: '',
+		returnDate: '',
+		pickUpTime: '',
+		pickUpLocation: '',
+		price: '',
+		availableSeats: 0
+	});
 
 	// Create empty traveler object
 	function createEmptyTraveler() {
@@ -140,6 +149,12 @@ const BookingAddModal = ({ onClose, onSave }) => {
 
 		if (!selectedTrip) {
 			newErrors.trip = "Please select a trip";
+		}
+
+		// Validate passengers count vs available seats
+		const selectedTripData = trips.find(t => t.id === selectedTrip);
+		if (selectedTripData && passengerCount > selectedTripData.availableSeats) {
+			newErrors.passengers = `Number of passengers (${passengerCount}) cannot exceed available seats (${selectedTripData.availableSeats})`;
 		}
 
 
@@ -285,19 +300,44 @@ const BookingAddModal = ({ onClose, onSave }) => {
 
 				{/* Body */}
 				<div className="booking-modal-body">
-					{/* Trip Selection */}
-					<div className="trip-select-section">
-						<div
-							className="booking-form-group"
-							style={{ width: "100%", maxWidth: "500px" }}
-						>
+					{/* Trip Selection Card */}
+					<div className="booking-section">
+						<h3 className="booking-section-title">Choose Trip</h3>
+						<div className="booking-form-group" style={{ width: "100%" }}>
 							<label>
 								Select Trip <span className="required">*</span>
 							</label>
 							<select
 								value={selectedTrip}
-								onChange={(e) => setSelectedTrip(e.target.value)}
+								onChange={(e) => {
+									const tripId = e.target.value;
+									setSelectedTrip(tripId);
+									// Auto-fill trip details
+									if (tripId) {
+										const trip = trips.find(t => t.id === tripId);
+										if (trip) {
+											setTripDetails({
+												departureDate: new Date(trip.departureDate).toLocaleDateString('en-GB'),
+												returnDate: new Date(trip.returnDate).toLocaleDateString('en-GB'),
+												pickUpTime: trip.pickUpTime || 'N/A',
+												pickUpLocation: trip.pickUpLocation || 'N/A',
+												price: trip.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(trip.price) : 'N/A',
+												availableSeats: trip.availableSeats || 0
+											});
+										}
+									} else {
+										setTripDetails({
+											departureDate: '',
+											returnDate: '',
+											pickUpTime: '',
+											pickUpLocation: '',
+											price: '',
+											availableSeats: 0
+										});
+									}
+								}}
 								disabled={loadingTrips}
+								style={{ width: "100%" }}
 							>
 								<option value="">-- Select a trip --</option>
 								{trips.map((trip) => (
@@ -311,6 +351,39 @@ const BookingAddModal = ({ onClose, onSave }) => {
 							{errors.trip && <span className="error-text">{errors.trip}</span>}
 						</div>
 					</div>
+
+					{/* Trip Information Card - Display filled details */}
+					{selectedTrip && (
+						<div className="booking-section">
+							<h3 className="booking-section-title">Trip Information</h3>
+							<div className="trip-info-grid">
+								<div className="booking-form-group">
+									<label>Departure Date</label>
+									<input type="text" value={tripDetails.departureDate} readOnly />
+								</div>
+								<div className="booking-form-group">
+									<label>Return Date</label>
+									<input type="text" value={tripDetails.returnDate} readOnly />
+								</div>
+								<div className="booking-form-group">
+									<label>Pick-up Time</label>
+									<input type="text" value={tripDetails.pickUpTime} readOnly />
+								</div>
+								<div className="booking-form-group">
+									<label>Pick-up Location</label>
+									<input type="text" value={tripDetails.pickUpLocation} readOnly />
+								</div>
+								<div className="booking-form-group">
+									<label>Price (per person)</label>
+									<input type="text" value={tripDetails.price} readOnly />
+								</div>
+								<div className="booking-form-group">
+									<label>Available Seats</label>
+									<input type="text" value={tripDetails.availableSeats} readOnly />
+								</div>
+							</div>
+						</div>
+					)}
 
 					{/* Customer Information Section */}
 					<div className="booking-section">
@@ -455,6 +528,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 								</button>
 							</div>
 						</div>
+						{errors.passengers && <span className="error-text">{errors.passengers}</span>}
 
 						<h3 className="booking-section-title">Traveler Information</h3>
 
@@ -467,9 +541,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 								<div className="traveler-row">
 									{/* Name with dropdown */}
 									<div className="booking-form-group name-field">
-										<label>
-											Full Name: <span className="required">*</span>
-										</label>
+										<label className="label-required">Full Name:</label>
 										<div className="traveler-select-wrapper">
 											<button
 												type="button"
@@ -538,9 +610,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 
 									{/* Email */}
 									<div className="booking-form-group">
-										<label>
-											Email <span className="required">*</span>
-										</label>
+										<label className="label-required">Email</label>
 										<input
 											type="email"
 											placeholder="Example@gmail.com"
@@ -556,7 +626,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 									</div>
 
 									{/* Phone */}
-									<div className="booking-form-group">
+									<div className="booking-form-group phone-field">
 										<label>Phone Number</label>
 										<input
 											type="text"

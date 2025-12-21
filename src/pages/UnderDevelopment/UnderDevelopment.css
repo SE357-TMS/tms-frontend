@@ -1,0 +1,4 @@
+.underdev-page { padding: 24px; display:flex; justify-content:center; }
+.underdev-card { max-width:760px; width:100%; background:#fff; border-radius:12px; padding:36px; box-shadow:0 6px 18px rgba(0,0,0,0.06); text-align:center; }
+.underdev-card h2 { margin:0 0 8px; font-size:20px; }
+.underdev-card p { margin:0; color:#6b7280; }

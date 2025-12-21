@@ -10,6 +10,7 @@ import TravelsPage from '../pages/TravelsPage/index.jsx';
 import TravelsPageWithQuery from '../pages/TravelsPageWithQuery/index.jsx';
 import TravelDetailPage from '../pages/TravelDetailPage/index.jsx';
 import UsersPage from '../pages/UsersPage/index.jsx';
+import UnderDevelopment from '../pages/UnderDevelopment/UnderDevelopment';
 import StaffPage from '../pages/StaffPage/index.jsx';
 // import CustomersPage from '../pages/CustomersPage/index.jsx';
 import TripsPage from '../pages/TripsPage/index.jsx';
@@ -21,6 +22,9 @@ import InvoicesPage from '../pages/InvoicesPage/index.jsx';
 import InvoiceDetailPage from '../pages/InvoiceDetailPage/index.jsx';
 import AttractionsPage from '../pages/AttractionsPage/index.jsx';
 import StatisticsPage from '../pages/StatisticsPage/index.jsx';
+import TripDetailPage from '../pages/TripDetailPage/index.jsx';
+import TripAddPage from '../pages/TripAddPage/index.jsx';
+import TripEditPage from '../pages/TripEditPage/index.jsx';
 import CustomerRouteDetailPage from '../pages/customer/RouteDetailPage/index.jsx';
 import SearchResultsPage from '../pages/customer/SearchResultsPage/SearchResultsPage';
 import CartPage from '../pages/customer/CartPage/index.jsx';
@@ -31,7 +35,6 @@ import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../hooks/useAuth';
 
-// Định nghĩa routes
 const LoadingScreen = () => (
   <div style={{
     display: 'flex',
@@ -69,6 +72,10 @@ const CustomerAccessGuard = ({ children }) => {
 
   if (isAuthenticated && user?.role === 'ADMIN') {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  if (isAuthenticated && user?.role === 'STAFF') {
+    return <Navigate to="/staff" replace />;
   }
 
   return children;
@@ -146,7 +153,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/customers',
-        element: <UsersPage />,
+        element: <UnderDevelopment message="Customers management is under development for Admin/Staff." />,
       },
       {
         path: '/staff',
@@ -155,6 +162,10 @@ export const router = createBrowserRouter([
       {
         path: '/travels',
         element: <TravelsPage />,
+      },
+      {
+        path: '/routes',
+        element: <UnderDevelopment message="Routes management is under development for Admin/Staff." />,
       },
       {
         path: '/travels/:id',
@@ -167,6 +178,18 @@ export const router = createBrowserRouter([
       {
         path: '/trips',
         element: <TripsPage />,
+      },
+      {
+        path: '/trips/new',
+        element: <TripAddPage />,
+      },
+      {
+        path: '/trips/:id',
+        element: <TripDetailPage />,
+      },
+      {
+        path: '/trips/:id/edit',
+        element: <TripEditPage />,
       },
       {
         path: '/bookings',

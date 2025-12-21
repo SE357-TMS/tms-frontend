@@ -125,7 +125,7 @@ const InvoicesPage = () => {
 			case "REFUNDED":
 				return "Refunded";
 			case "UNPAID":
-				return "Waiting";
+				return "Unpaid";
 			default:
 				return status;
 		}
@@ -181,7 +181,7 @@ const InvoicesPage = () => {
 					>
 						<option value="">All Status</option>
 						<option value="PAID">Paid</option>
-						<option value="UNPAID">Pending</option>
+						<option value="UNPAID">Unpaid</option>
 						<option value="REFUNDED">Refunded</option>
 					</select>
 				</div>

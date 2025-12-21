@@ -32,6 +32,16 @@ const BookingAddPage = () => {
 	// State for submission
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState({});
+	
+	// State for trip details display
+	const [tripDetails, setTripDetails] = useState({
+		departureDate: '',
+		returnDate: '',
+		pickUpTime: '',
+		pickUpLocation: '',
+		price: '',
+		availableSeats: 0
+	});
 
 	useEffect(() => {
 		setTitle("Add New Booking");
@@ -155,6 +165,12 @@ const BookingAddPage = () => {
 			newErrors.trip = "Please select a trip";
 		}
 
+		// Validate passengers count vs available seats
+		const selectedTripData = trips.find(t => t.id === selectedTrip);
+		if (selectedTripData && passengerCount > selectedTripData.availableSeats) {
+			newErrors.passengers = `Number of passengers (${passengerCount}) cannot exceed available seats (${selectedTripData.availableSeats})`;
+		}
+
 		// Booking always belongs to a customer (payer)
 		if (!selectedCustomer) {
 			newErrors.customer = "Please select a customer";
@@ -260,13 +276,45 @@ const BookingAddPage = () => {
 
 				{/* Body */}
 				<div className="booking-add-body">
-					{/* Trip Selection */}
-					<div className="trip-select-section">
-						<div className="booking-form-group" style={{ width: "100%", maxWidth: "500px" }}>
+					{/* Trip Information Card */}
+					<div className="booking-section">
+						<h3 className="booking-section-title">Trip Information</h3>
+						<div className="booking-form-group" style={{ width: "100%", marginBottom: "28px" }}>
 							<label>
 								Select Trip <span className="required">*</span>
 							</label>
-							<select value={selectedTrip} onChange={(e) => setSelectedTrip(e.target.value)} disabled={loadingTrips}>
+							<select 
+								value={selectedTrip} 
+								onChange={(e) => {
+									const tripId = e.target.value;
+									setSelectedTrip(tripId);
+									// Auto-fill trip details
+									if (tripId) {
+										const trip = trips.find(t => t.id === tripId);
+										if (trip) {
+											setTripDetails({
+												departureDate: new Date(trip.departureDate).toLocaleDateString('en-GB'),
+												returnDate: new Date(trip.returnDate).toLocaleDateString('en-GB'),
+												pickUpTime: trip.pickUpTime || 'N/A',
+												pickUpLocation: trip.pickUpLocation || 'N/A',
+												price: trip.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(trip.price) : 'N/A',
+												availableSeats: trip.availableSeats || 0
+											});
+										}
+									} else {
+										setTripDetails({
+											departureDate: '',
+											returnDate: '',
+											pickUpTime: '',
+											pickUpLocation: '',
+											price: '',
+											availableSeats: 0
+										});
+									}
+								}} 
+								disabled={loadingTrips}
+								style={{ width: "100%" }}
+							>
 								<option value="">-- Select a trip --</option>
 								{trips.map((trip) => (
 									<option key={trip.id} value={trip.id}>
@@ -276,6 +324,33 @@ const BookingAddPage = () => {
 								))}
 							</select>
 							{errors.trip && <span className="error-text">{errors.trip}</span>}
+						</div>
+						
+						<div className="trip-info-grid">
+							<div className="booking-form-group">
+								<label>Departure Date</label>
+								<input type="text" value={tripDetails.departureDate} placeholder="Departure date" readOnly />
+							</div>
+							<div className="booking-form-group">
+								<label>Return Date</label>
+								<input type="text" value={tripDetails.returnDate} placeholder="Return date" readOnly />
+							</div>
+							<div className="booking-form-group">
+								<label>Pick-up Time</label>
+								<input type="text" value={tripDetails.pickUpTime} placeholder="Pick-up time" readOnly />
+							</div>
+							<div className="booking-form-group">
+								<label>Pick-up Location</label>
+								<input type="text" value={tripDetails.pickUpLocation} placeholder="Pick-up location" readOnly />
+							</div>
+							<div className="booking-form-group">
+								<label>Price (per person)</label>
+								<input type="text" value={tripDetails.price} placeholder="Price" readOnly />
+							</div>
+							<div className="booking-form-group">
+								<label>Available Seats</label>
+								<input type="text" value={tripDetails.availableSeats || ''} placeholder="Total seats" readOnly />
+							</div>
 						</div>
 					</div>
 
@@ -387,6 +462,7 @@ const BookingAddPage = () => {
 								</button>
 							</div>
 						</div>
+						{errors.passengers && <span className="error-text">{errors.passengers}</span>}
 
 						<h3 className="booking-section-title">Traveler Information</h3>
 
@@ -397,9 +473,7 @@ const BookingAddPage = () => {
 								<div className="traveler-row">
 									{/* Name with dropdown */}
 									<div className="booking-form-group name-field">
-										<label>
-											Full Name: <span className="required">*</span>
-										</label>
+										<label className="label-required">Full Name:</label>
 										<div className="traveler-select-wrapper">
 											<button
 												type="button"
@@ -442,9 +516,7 @@ const BookingAddPage = () => {
 
 									{/* Email */}
 									<div className="booking-form-group">
-										<label>
-											Email <span className="required">*</span>
-										</label>
+										<label className="label-required">Email</label>
 										<input
 											type="email"
 											placeholder="Example@gmail.com"
@@ -458,7 +530,7 @@ const BookingAddPage = () => {
 									</div>
 
 									{/* Phone */}
-									<div className="booking-form-group">
+									<div className="booking-form-group phone-field">
 										<label>Phone Number</label>
 										<input
 											type="text"

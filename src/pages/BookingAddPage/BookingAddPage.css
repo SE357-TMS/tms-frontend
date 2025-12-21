@@ -101,6 +101,13 @@
 	grid-column: span 3;
 }
 
+/* Trip Information Grid */
+.trip-info-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+}
+
 /* Form Group */
 .booking-form-group {
 	display: flex;
@@ -115,6 +122,22 @@
 	line-height: 16px;
 	letter-spacing: 0.5px;
 	color: rgba(0, 0, 0, 0.7);
+	display: inline-flex;
+	align-items: baseline;
+	gap: 2px;
+	white-space: nowrap;
+}
+
+.booking-form-group label .required {
+	display: inline;
+	line-height: 1;
+}
+
+.booking-form-group label.label-required::after {
+	content: "*";
+	color: #ef4444;
+	margin-left: 2px;
+	display: inline;
 }
 
 .booking-form-group input,
@@ -265,6 +288,11 @@
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 16px 32px;
+}
+
+/* Align Phone field baseline with required fields when required '*' wraps */
+.traveler-row .phone-field label {
+	padding-bottom: 16px;
 }
 
 /* Traveler Select with Dropdown */
@@ -422,11 +450,6 @@
 .required {
 	color: #ef4444;
 	margin-left: 2px;
-}
-
-/* Trip Select Section */
-.trip-select-section {
-	margin-bottom: 20px;
 }
 
 /* Responsive */

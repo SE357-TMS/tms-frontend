@@ -1,0 +1,267 @@
+/* Choose Route Modal */
+.choose-route-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.choose-route-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 900px;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal Header */
+.choose-route-modal .modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.choose-route-modal .modal-header h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #4d40ca;
+  margin: 0;
+}
+
+.choose-route-modal .close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.choose-route-modal .close-btn:hover {
+  opacity: 0.7;
+}
+
+.choose-route-modal .close-btn svg {
+  color: #6b7280;
+}
+
+/* Modal Body */
+.choose-route-modal .modal-body {
+  padding: 24px 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Search Box */
+.choose-route-modal .search-box {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.choose-route-modal .search-box input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1f2937;
+  transition: border-color 0.2s;
+}
+
+.choose-route-modal .search-box input:focus {
+  outline: none;
+  border-color: #4d40ca;
+}
+
+.choose-route-modal .search-box input::placeholder {
+  color: #9ca3af;
+}
+
+.choose-route-modal .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+/* Route List */
+.choose-route-modal .route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.choose-route-modal .loading-state,
+.choose-route-modal .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Route Card */
+.choose-route-modal .route-card {
+  display: flex;
+  gap: 20px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.choose-route-modal .route-card:hover {
+  border-color: #4d40ca;
+  background: #f9fafb;
+}
+
+.choose-route-modal .route-card.selected {
+  border-color: #4d40ca;
+  background: #ebe4ff;
+}
+
+.choose-route-modal .route-image {
+  flex-shrink: 0;
+  width: 200px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.choose-route-modal .route-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.choose-route-modal .route-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.choose-route-modal .route-name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #1f2937;
+  margin: 0;
+}
+
+.choose-route-modal .route-locations {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}
+
+.choose-route-modal .route-locations .location {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.choose-route-modal .route-locations svg {
+  color: #9ca3af;
+}
+
+.choose-route-modal .route-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}
+
+.choose-route-modal .route-details .duration {
+  color: #4d40ca;
+  font-weight: 600;
+}
+
+.choose-route-modal .route-details .description {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Modal Footer */
+.choose-route-modal .modal-footer {
+  padding: 20px 32px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.choose-route-modal .btn-cancel,
+.choose-route-modal .btn-confirm {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid;
+}
+
+.choose-route-modal .btn-cancel {
+  background: rgba(195, 65, 65, 0.1);
+  border-color: #c34141;
+  color: #c34141;
+}
+
+.choose-route-modal .btn-cancel:hover {
+  background: rgba(195, 65, 65, 0.2);
+}
+
+.choose-route-modal .btn-confirm {
+  background: rgba(15, 191, 0, 0.1);
+  border-color: #0fbf00;
+  color: #0fbf00;
+}
+
+.choose-route-modal .btn-confirm:hover:not(:disabled) {
+  background: rgba(15, 191, 0, 0.2);
+}
+
+.choose-route-modal .btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .choose-route-modal {
+    width: 95vw;
+  }
+
+  .choose-route-modal .modal-header,
+  .choose-route-modal .modal-body,
+  .choose-route-modal .modal-footer {
+    padding: 16px 20px;
+  }
+
+  .choose-route-modal .route-card {
+    flex-direction: column;
+  }
+
+  .choose-route-modal .route-image {
+    width: 100%;
+    height: 180px;
+  }
+}

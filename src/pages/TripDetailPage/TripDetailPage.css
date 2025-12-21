@@ -1,0 +1,163 @@
+.trip-detail-page {
+  padding: 20px;
+  --success-green: #0FBF00;
+}
+
+/* Loading and Error States */
+.loading-state,
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  color: var(--text-secondary, #6b7280);
+  text-align: center;
+  font-size: 16px;
+}
+
+.loading-state {
+  gap: 12px;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border-color, #e5e7eb);
+  border-top-color: var(--primary-color, #4d40ca);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-state {
+  color: #dc2626;
+}
+
+.trip-header h1 { font-size: 24px; margin: 0; }
+.trip-sub { color: #6b7280; margin-top: 6px; }
+
+.trip-info-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 16px;
+  position: relative;
+}
+
+/* Status badge styles */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.scheduled {
+  background: rgba(234, 179, 8, 0.1);
+  color: #ca8a04;
+}
+
+.status-badge.ongoing {
+  background: rgba(15, 191, 0, 0.08);
+  color: var(--success-green);
+}
+
+.status-badge.finished {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.status-badge.canceled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.trip-title { font-weight: 600; font-size: 18px; margin: 8px 0 16px; text-align: center; }
+.trip-subtitle { text-align: left; color: #6b7280; margin: 4px 0 12px; padding-left: 10px; }
+.trip-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px 24px;
+  align-items: start;
+  margin-top: 12px;
+}
+.metric {
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+}
+.metric .label { font-size: 13px; color: var(--success-green); font-weight: 600; }
+.metric .value { font-size: 16px; color: #111827; margin-top: 6px; }
+.metric .value.status { color: #6b7280; }
+
+.btn-edit-trip { position: absolute; right: 16px; top: 16px; width: 34px; height: 34px; border-radius: 6px; border: 1px solid #10b981; background: #fff; cursor: pointer; }
+
+.travelers-section { margin-top: 28px; }
+.section-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.section-header h2 { margin:0; }
+.section-actions { display:flex; gap:12px; align-items:center; }
+.search-box { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; border:1px solid var(--border-color,#e5e7eb); background:white; }
+.search-box .search-icon { width:18px; height:18px; object-fit:contain; }
+.search-box .search-input { border:none; outline:none; background:transparent; font-size:14px; color:var(--text-primary,#111827); width:100%; }
+
+.traveler-table-wrapper { margin-top:12px; background:white; border-radius:12px; overflow:hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.traveler-table { width:100%; border-collapse:collapse; }
+.traveler-table th, .traveler-table td { padding:12px 16px; text-align:left; border-top:1px solid var(--border-color,#e5e7eb); }
+.traveler-table thead { background: var(--bg-secondary,#fafafa); }
+.btn-add-booking { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; border:0.5px solid var(--primary-color,#4d40ca); color:var(--primary-color,#4d40ca); background:white; cursor:pointer; }
+.btn-add-booking img { width:18px; height:18px; }
+
+/* Action buttons in travelers table */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-edit,
+.btn-delete {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background: rgba(234, 179, 8, 0.1);
+  color: #ca8a04;
+}
+
+.btn-edit:hover {
+  background: rgba(234, 179, 8, 0.2);
+}
+
+.btn-delete {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+@media (max-width:900px) {
+  .trip-metrics { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 16px; }
+}
+
+@media (max-width:600px) {
+  .trip-metrics { grid-template-columns: 1fr; }
+  .trip-info-card { padding: 16px; }
+}

@@ -23,6 +23,7 @@ import AttractionsPage from '../pages/AttractionsPage/index.jsx';
 import StatisticsPage from '../pages/StatisticsPage/index.jsx';
 import TripDetailPage from '../pages/TripDetailPage/index.jsx';
 import TripAddPage from '../pages/TripAddPage/index.jsx';
+import TripEditPage from '../pages/TripEditPage/index.jsx';
 import CustomerRouteDetailPage from '../pages/customer/RouteDetailPage/index.jsx';
 import SearchResultsPage from '../pages/customer/SearchResultsPage/SearchResultsPage';
 import CartPage from '../pages/customer/CartPage/index.jsx';
@@ -176,6 +177,10 @@ export const router = createBrowserRouter([
       {
         path: '/trips/:id',
         element: <TripDetailPage />,
+      },
+      {
+        path: '/trips/:id/edit',
+        element: <TripEditPage />,
       },
       {
         path: '/bookings',

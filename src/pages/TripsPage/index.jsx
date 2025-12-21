@@ -15,6 +15,11 @@ const TripsPage = () => {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
     setTitle('All Trips');
@@ -22,19 +27,122 @@ const TripsPage = () => {
   }, [setTitle, setSubtitle]);
 
   const filteredQuery = query; // keep variable name for clarity
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // Helper functions for formatting
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB');
+  };
+
+  const formatPrice = (price) => {
+    if (!price) return '0 ₫';
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'SCHEDULED':
+        return 'scheduled';
+      case 'ONGOING':
+        return 'ongoing';
+      case 'FINISHED':
+        return 'finished';
+      case 'CANCELED':
+        return 'canceled';
+      default:
+        return 'scheduled';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'SCHEDULED':
+        return 'Scheduled';
+      case 'ONGOING':
+        return 'Ongoing';
+      case 'FINISHED':
+        return 'Finished';
+      case 'CANCELED':
+        return 'Canceled';
+      default:
+        return status || 'N/A';
+    }
+  };
+
+  // Pagination helper function
+  const getPaginationNumbers = (currentPage, totalPages) => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push('...');
+      }
+      
+      // Show current page and neighbors
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push('...');
+      }
+      
+      // Always show last page if not already included
+      if (!pages.includes(totalPages)) {
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
 
   useEffect(() => {
     const fetchTrips = async () => {
       setLoading(true);
       try {
-        const params = { page: 1, pageSize: 50 };
-        if (filteredQuery) params.keyword = filteredQuery;
+        const params = { 
+          page: currentPage, 
+          pageSize: itemsPerPage 
+        };
         if (statusFilter) params.status = statusFilter;
+        // Backend doesn't have keyword search in TripFilterRequest, we'll filter client-side for now
 
         const response = await tripService.getTrips(params);
         const payload = response.data?.data || {};
-        const items = payload.items || payload.content || [];
+        let items = payload.items || payload.content || [];
+        let total = payload.totalElements || payload.total || items.length;
+        
+        // Client-side filtering by route name if search query exists
+        if (filteredQuery) {
+          items = items.filter(trip => 
+            trip.routeName?.toLowerCase().includes(filteredQuery.toLowerCase()) ||
+            trip.startLocation?.toLowerCase().includes(filteredQuery.toLowerCase()) ||
+            trip.endLocation?.toLowerCase().includes(filteredQuery.toLowerCase())
+          );
+          total = items.length; // Update total after filtering
+        }
+        
         setTrips(items);
+        setTotalItems(total);
         setError(null);
       } catch (err) {
         console.error('Error fetching trips:', err);
@@ -45,7 +153,7 @@ const TripsPage = () => {
     };
 
     fetchTrips();
-  }, [filteredQuery, statusFilter]);
+  }, [filteredQuery, statusFilter, currentPage, itemsPerPage]);
 
   return (
     <div className="trips-page">
@@ -73,10 +181,10 @@ const TripsPage = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="">All Status</option>
-            <option value="SCHEDULED">Pending</option>
-            <option value="ONGOING">Confirmed</option>
-            <option value="FINISHED">Canceled</option>
-            <option value="CANCELED">Completed</option>
+            <option value="SCHEDULED">Scheduled</option>
+            <option value="ONGOING">Ongoing</option>
+            <option value="FINISHED">Finished</option>
+            <option value="CANCELED">Canceled</option>
           </select>
         </div>
 
@@ -131,17 +239,17 @@ const TripsPage = () => {
                   <tr key={trip.id}>
                     <td>
                       <div className="trip-info">
-                        <div className="trip-name">{trip.name}</div>
-                        <div className="trip-sub">{trip.shortDescription || trip.routeName || 'Short description or route'}</div>
+                        <div className="trip-name">{trip.routeName || 'N/A'}</div>
+                        <div className="trip-sub">{trip.startLocation && trip.endLocation ? `${trip.startLocation} → ${trip.endLocation}` : 'Route info'}</div>
                       </div>
                     </td>
-                    <td className="trip-departure">{trip.departureDate || trip.departure}</td>
-                    <td className="trip-pickup">{trip.pickupLocation || trip.pickup}</td>
+                    <td className="trip-departure">{formatDate(trip.departureDate)}</td>
+                    <td className="trip-pickup">{trip.pickUpLocation || 'N/A'}</td>
                     <td style={{textAlign:'center'}}>
-                      <span className={`status-badge ${String(trip.status || '').toLowerCase() === 'completed' ? 'completed' : 'waiting'}`}>{trip.status || 'N/A'}</span>
+                      <span className={`status-badge ${getStatusClass(trip.status)}`}>{getStatusText(trip.status)}</span>
                     </td>
-                    <td className="trip-price" style={{textAlign:'center'}}>{trip.price}</td>
-                    <td className="trip-booked">{trip.booked || trip.seatsBooked || ''}</td>
+                    <td className="trip-price" style={{textAlign:'center'}}>{formatPrice(trip.price)}</td>
+                    <td className="trip-booked">{trip.bookedSeats || 0}/{trip.totalSeats || 0}</td>
                     <td>
                       <div className="action-buttons">
                         <button
@@ -153,7 +261,7 @@ const TripsPage = () => {
                         </button>
                         <button
                           className="btn-edit"
-                          onClick={() => alert(`Edit ${trip.id}`)}
+                          onClick={() => navigate(`/trips/${trip.id}/edit`)}
                           title="Edit"
                         >
                           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -179,13 +287,60 @@ const TripsPage = () => {
         </div>
 
         <div className="trips-pagination-wrapper">
-          <div className="pagination-info">Showing {trips.length} trips</div>
+          <div className="pagination-info">
+            <span>Show</span>
+            <select 
+              className="page-size-select"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(parseInt(e.target.value));
+                setCurrentPage(1); // Reset to first page
+              }}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            <span>entries</span>
+          </div>
+          
+          <div className="pagination-info">
+            <span>Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries</span>
+          </div>
+          
           <div className="trips-pagination">
-            <button className="pagination-btn">‹</button>
-            <button className="pagination-btn">1</button>
-            <button className="pagination-btn">2</button>
-            <button className="pagination-btn">3</button>
-            <button className="pagination-btn">›</button>
+            <button
+              className="pagination-btn"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Previous
+            </button>
+            
+            {/* Page numbers */}
+            {getPaginationNumbers(currentPage, totalPages).map((pageNum, idx) => (
+              pageNum === '...' ? (
+                <span key={`ellipsis-${idx}`} className="pagination-btn" style={{cursor: 'default', border: 'none'}}>...</span>
+              ) : (
+                <button
+                  key={pageNum}
+                  className={`pagination-btn ${pageNum === currentPage ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              )
+            ))}
+            
+            <button
+              className="pagination-btn"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

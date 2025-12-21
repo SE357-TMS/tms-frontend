@@ -1,38 +1,179 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import './TripDetailPage.css';
 import viewIcon from '../../assets/icons/view.svg';
 import addNewIcon from '../../assets/icons/addnew.svg';
 import searchIcon from '../../assets/icons/searchicon.svg';
 import EditTripModal from './EditTripModal';
-
-const mockTrip = {
-  id: 1,
-  title: 'Thái Lan: Bangkok - Pattaya (Chợ nổi, chùa Phật Lớn, Suan Thai Pattaya)',
-  departureDate: '31/12/2025',
-  returnDate: '22/01/2026',
-  pickupTime: '23:35',
-  pickupLocation: 'Sân bay Tân Sơn Nhất',
-  price: '18.190.000 đ',
-  bookedSeats: 11,
-  totalSeats: 15,
-  status: 'ONGOING',
-  travelers: [
-    { id: 'SGTL239', fullName: 'Đặng Phú Thiện', gender: 'Nam', birthday: '07/01/2001', identity: 'B8901234' },
-    { id: 'SGTL240', fullName: 'Nguyễn Thị A', gender: 'Nữ', birthday: '12/03/1995', identity: 'A1234567' },
-  ],
-};
+import tripService from '../../services/tripService';
+import api from '../../lib/httpHandler';
 
 const TripDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
+  
+  // Bookings/Travelers state
+  const [bookings, setBookings] = useState([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // For now use mock data. Replace with API fetch later.
-    setTrip(mockTrip);
+    const fetchTrip = async () => {
+      if (!id) return;
+      
+      setLoading(true);
+      try {
+        const response = await tripService.getTripById(id);
+        const tripData = response.data?.data;
+        setTrip(tripData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching trip:', err);
+        setError('Unable to load trip details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrip();
   }, [id]);
+
+  // Fetch bookings for this trip
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (!id) return;
+      
+      setLoadingBookings(true);
+      try {
+        const response = await api.get('/api/v1/tour-bookings', {
+          params: { tripId: id, pageSize: 100 }
+        });
+        const bookingsData = response.data?.data?.items || response.data?.data?.content || [];
+        setBookings(bookingsData);
+      } catch (err) {
+        console.error('Error fetching bookings:', err);
+      } finally {
+        setLoadingBookings(false);
+      }
+    };
+
+    fetchBookings();
+  }, [id]);
+
+  // Delete booking handler
+  const handleDeleteBooking = async (bookingId) => {
+    const result = await Swal.fire({
+      title: 'Delete Booking?',
+      text: 'Are you sure you want to delete this booking? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/api/v1/tour-bookings/${bookingId}`);
+        
+        // Remove from local state
+        setBookings(prev => prev.filter(b => b.id !== bookingId));
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Booking has been deleted.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } catch (err) {
+        console.error('Error deleting booking:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.response?.data?.message || 'Failed to delete booking'
+        });
+      }
+    }
+  };
+
+  // Helper functions
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB');
+  };
+
+  const formatPrice = (price) => {
+    if (!price) return '0 ₫';
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
+  const formatTime = (timeString) => {
+    if (!timeString) return 'N/A';
+    return timeString.substring(0, 5); // HH:mm format
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'SCHEDULED':
+        return 'scheduled';
+      case 'ONGOING':
+        return 'ongoing';
+      case 'FINISHED':
+        return 'finished';
+      case 'CANCELED':
+        return 'canceled';
+      default:
+        return 'scheduled'; // fallback
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'SCHEDULED':
+        return 'Scheduled';
+      case 'ONGOING':
+        return 'Ongoing';
+      case 'FINISHED':
+        return 'Finished';
+      case 'CANCELED':
+        return 'Canceled';
+      default:
+        return status || 'N/A';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="trip-detail-page">
+        <div className="loading-state">
+          <div className="spinner"></div>
+          Loading trip details...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="trip-detail-page">
+        <div className="error-state">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   if (!trip) return null;
 
@@ -44,44 +185,53 @@ const TripDetailPage = () => {
       </div>
 
       <div className="trip-info-card">
-        <div className="trip-title">{trip.title}</div>
+        <div className="trip-title">{trip.routeName || 'Trip Details'}</div>
+        <div className="trip-subtitle">{trip.startLocation && trip.endLocation ? `${trip.startLocation} → ${trip.endLocation}` : ''}</div>
 
         <div className="trip-metrics">
           <div className="metric">
             <div className="label">Departure date</div>
-            <div className="value">{trip.departureDate}</div>
+            <div className="value">{formatDate(trip.departureDate)}</div>
           </div>
           <div className="metric">
             <div className="label">Return date</div>
-            <div className="value">{trip.returnDate}</div>
+            <div className="value">{formatDate(trip.returnDate)}</div>
           </div>
           <div className="metric">
             <div className="label">Pick-up time</div>
-            <div className="value">{trip.pickupTime}</div>
+            <div className="value">{formatTime(trip.pickUpTime)}</div>
           </div>
           <div className="metric">
             <div className="label">Pick-up location</div>
-            <div className="value">{trip.pickupLocation}</div>
+            <div className="value">{trip.pickUpLocation || 'N/A'}</div>
           </div>
           <div className="metric">
             <div className="label">Price</div>
-            <div className="value">{trip.price}</div>
+            <div className="value">{formatPrice(trip.price)}</div>
           </div>
           <div className="metric">
             <div className="label">Booked seats</div>
-            <div className="value">{trip.bookedSeats}</div>
+            <div className="value">{trip.bookedSeats || 0}</div>
           </div>
           <div className="metric">
             <div className="label">Total seats</div>
-            <div className="value">{trip.totalSeats}</div>
+            <div className="value">{trip.totalSeats || 0}</div>
+          </div>
+          <div className="metric">
+            <div className="label">Available seats</div>
+            <div className="value">{trip.availableSeats || 0}</div>
           </div>
           <div className="metric">
             <div className="label">Status</div>
-            <div className="value status">{trip.status}</div>
+            <div className="value">
+              <span className={`status-badge ${getStatusClass(trip.status)}`}>
+                {getStatusText(trip.status)}
+              </span>
+            </div>
           </div>
         </div>
 
-        <button className="btn-edit-trip" title="Edit trip" onClick={() => setShowEdit(true)}>
+        <button className="btn-edit-trip" title="Edit trip" onClick={() => navigate(`/trips/${id}/edit`)}>
           ✏️
         </button>
         {showEdit && (
@@ -99,7 +249,12 @@ const TripDetailPage = () => {
           <div className="section-actions">
             <div className="search-box">
               <img src={searchIcon} alt="Search" className="search-icon" />
-              <input className="search-input" placeholder="Search..." />
+              <input 
+                className="search-input" 
+                placeholder="Search..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <button className="btn-add-booking" onClick={() => navigate(`/bookings/new?tripId=${trip.id}`)}>
               <img src={addNewIcon} alt="Add" />
@@ -112,28 +267,81 @@ const TripDetailPage = () => {
           <table className="traveler-table">
             <thead>
               <tr>
-                <th>Booking</th>
+                <th>Booking ID</th>
                 <th>Full name</th>
-                <th>Gender</th>
-                <th>Birthday</th>
-                <th>Identity</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Booking Date</th>
                 <th style={{textAlign:'center'}}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {trip.travelers.map(t => (
-                <tr key={t.identity}>
-                  <td>{t.id}</td>
-                  <td>{t.fullName}</td>
-                  <td>{t.gender}</td>
-                  <td>{t.birthday}</td>
-                  <td>{t.identity}</td>
-                  <td style={{textAlign:'center'}}>
-                    <button className="btn-view" title="View"><img src={viewIcon} alt="View"/></button>
-                    <button className="btn-delete" title="Delete">🗑️</button>
+              {loadingBookings ? (
+                <tr>
+                  <td colSpan="6" className="table-empty">
+                    Loading bookings...
                   </td>
                 </tr>
-              ))}
+              ) : (() => {
+                // Flatten bookings to show each traveler as a row
+                const travelers = bookings.flatMap(booking => 
+                  (booking.travelers || []).map(traveler => ({
+                    ...traveler,
+                    bookingId: booking.id,
+                    bookingCreatedAt: booking.createdAt
+                  }))
+                );
+                
+                const filtered = travelers.filter(t => {
+                  if (!searchQuery) return true;
+                  const q = searchQuery.toLowerCase();
+                  return (
+                    t.fullName?.toLowerCase().includes(q) ||
+                    t.email?.toLowerCase().includes(q) ||
+                    t.phoneNumber?.toLowerCase().includes(q)
+                  );
+                });
+                
+                return filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="table-empty">
+                      No travelers found for this trip
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((traveler) => (
+                    <tr key={traveler.id}>
+                      <td>{traveler.bookingId?.substring(0, 8) || 'N/A'}</td>
+                      <td>{traveler.fullName || 'N/A'}</td>
+                      <td>{traveler.email || 'N/A'}</td>
+                      <td>{traveler.phoneNumber || 'N/A'}</td>
+                      <td>{formatDate(traveler.bookingCreatedAt)}</td>
+                      <td style={{textAlign:'center'}}>
+                        <div className="action-buttons">
+                          <button
+                            className="btn-edit"
+                            onClick={() => navigate(`/bookings/${traveler.bookingId}/edit`)}
+                            title="Edit"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                              <path d="M13.5 1.5L16.5 4.5M1.5 16.5L2.25 13.5L12.75 3L15 5.25L4.5 15.75L1.5 16.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                          <button
+                            className="btn-delete"
+                            onClick={() => handleDeleteBooking(traveler.bookingId)}
+                            title="Delete"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                              <path d="M2.25 4.5H15.75M6.75 4.5V3C6.75 2.17157 7.42157 1.5 8.25 1.5H9.75C10.5784 1.5 11.25 2.17157 11.25 3V4.5M14.25 4.5V15C14.25 15.8284 13.5784 16.5 12.75 16.5H5.25C4.42157 16.5 3.75 15.8284 3.75 15V4.5H14.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                );
+              })()}
             </tbody>
           </table>
         </div>

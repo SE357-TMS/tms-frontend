@@ -68,9 +68,12 @@ const LoginPage = () => {
       console.log('👤 Current user:', currentUser);
       
       // Redirect based on user role
-      if (currentUser?.role === 'ADMIN' || currentUser?.role === 'STAFF') {
-        console.log('🔑 Admin/Staff detected, redirecting to dashboard');
+      if (currentUser?.role === 'ADMIN') {
+        console.log('🔑 Admin detected, redirecting to dashboard');
         navigate('/dashboard');
+      } else if (currentUser?.role === 'STAFF') {
+        console.log('🔑 Staff detected, redirecting to staff page');
+        navigate('/staff');
       } else {
         console.log('👥 Customer detected, redirecting to home');
         navigate('/');

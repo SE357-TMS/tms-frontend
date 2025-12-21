@@ -10,6 +10,7 @@ import TravelsPage from '../pages/TravelsPage/index.jsx';
 import TravelsPageWithQuery from '../pages/TravelsPageWithQuery/index.jsx';
 import TravelDetailPage from '../pages/TravelDetailPage/index.jsx';
 import UsersPage from '../pages/UsersPage/index.jsx';
+import UnderDevelopment from '../pages/UnderDevelopment/UnderDevelopment';
 import StaffPage from '../pages/StaffPage/index.jsx';
 // import CustomersPage from '../pages/CustomersPage/index.jsx';
 import TripsPage from '../pages/TripsPage/index.jsx';
@@ -71,6 +72,10 @@ const CustomerAccessGuard = ({ children }) => {
 
   if (isAuthenticated && user?.role === 'ADMIN') {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  if (isAuthenticated && user?.role === 'STAFF') {
+    return <Navigate to="/staff" replace />;
   }
 
   return children;
@@ -148,7 +153,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/customers',
-        element: <UsersPage />,
+        element: <UnderDevelopment message="Customers management is under development for Admin/Staff." />,
       },
       {
         path: '/staff',
@@ -157,6 +162,10 @@ export const router = createBrowserRouter([
       {
         path: '/travels',
         element: <TravelsPage />,
+      },
+      {
+        path: '/routes',
+        element: <UnderDevelopment message="Routes management is under development for Admin/Staff." />,
       },
       {
         path: '/travels/:id',

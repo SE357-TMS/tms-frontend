@@ -142,7 +142,10 @@ const BookingAddModal = ({ onClose, onSave }) => {
 			newErrors.trip = "Please select a trip";
 		}
 
-		if (!selectedCustomer) {
+
+		// Allow booking when a traveler was chosen from dropdown (use that customer's id)
+		const travelerCustomer = travelers.find((t) => t.selectedCustomerId);
+		if (!selectedCustomer && !travelerCustomer) {
 			newErrors.customer = "Please select a customer";
 		}
 
@@ -152,9 +155,6 @@ const BookingAddModal = ({ onClose, onSave }) => {
 			}
 			if (!traveler.dateOfBirth) {
 				newErrors[`traveler_${index}_dob`] = "Please enter date of birth";
-			}
-			if (!traveler.identityDoc.trim()) {
-				newErrors[`traveler_${index}_doc`] = "Please enter ID/Passport";
 			}
 		});
 
@@ -172,16 +172,45 @@ const BookingAddModal = ({ onClose, onSave }) => {
 		try {
 			setLoading(true);
 
+			// Determine userId: explicit selectedCustomer first, else traveler-selected customer
+			const travelerCustomerId = travelers.find((t) => t.selectedCustomerId)?.selectedCustomerId;
+			const userId = selectedCustomer ? selectedCustomer.id : travelerCustomerId;
+
+			// If no userId determined yet, try to create customer from first traveler (needs email)
+			let finalUserId = userId;
+			if (!finalUserId) {
+				const primaryTraveler = travelers[0];
+				if (primaryTraveler && primaryTraveler.email) {
+					try {
+						const usernameBase = primaryTraveler.email.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase();
+						const payload = {
+							username: `${usernameBase}_${Date.now()}`,
+							password: Math.random().toString(36).slice(-8),
+							fullName: primaryTraveler.fullName || usernameBase,
+							email: primaryTraveler.email,
+							phoneNumber: primaryTraveler.identityDoc || null,
+						};
+						const resp = await api.post('/admin/users', payload);
+						finalUserId = resp.data.data.id;
+					} catch (err) {
+						console.error('Error creating customer:', err);
+						await Swal.fire({ icon: 'error', title: 'Error', text: 'Could not create customer account for booking. Please select an existing customer or provide traveler email.', confirmButtonColor: '#4D40CA' });
+						setLoading(false);
+						return;
+					}
+				}
+			}
+
 			const requestData = {
 				tripId: selectedTrip,
-				userId: selectedCustomer.id,
+				userId: finalUserId,
 				noAdults: passengerCount,
 				noChildren: 0,
 				travelers: travelers.map((t) => ({
 					fullName: t.fullName,
 					gender: t.gender,
 					dateOfBirth: t.dateOfBirth,
-					identityDoc: t.identityDoc,
+					identityDoc: t.identityDoc || null,
 				})),
 			};
 
@@ -528,9 +557,7 @@ const BookingAddModal = ({ onClose, onSave }) => {
 
 									{/* Phone */}
 									<div className="booking-form-group">
-										<label>
-											Phone Number <span className="required">*</span>
-										</label>
+										<label>Phone Number</label>
 										<input
 											type="text"
 											placeholder="Phone Number"

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
-import { createPortal } from "react-dom";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminTitleContext } from "../../layouts/adminLayout/AdminLayout/AdminTitleContext";
 import Swal from "sweetalert2";
@@ -27,10 +26,6 @@ const BookingAddPage = () => {
 	const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
 	const [customerSearchText, setCustomerSearchText] = useState("");
 
-	// Portal positioning for customer dropdown
-	const customerBtnRef = useRef(null);
-	const [customerDropdownStyle, setCustomerDropdownStyle] = useState(null);
-
 	// State for traveler dropdowns
 	const [openTravelerDropdown, setOpenTravelerDropdown] = useState(null);
 
@@ -50,6 +45,8 @@ const BookingAddPage = () => {
 			gender: "M",
 			dateOfBirth: "",
 			identityDoc: "",
+			email: "",
+			phoneNumber: "",
 			isFromDropdown: false,
 			selectedCustomerId: null,
 		};
@@ -139,7 +136,9 @@ const BookingAddPage = () => {
 				fullName: customer.fullName,
 				gender: customer.gender || "M",
 				dateOfBirth: customer.birthday || "",
-				identityDoc: customer.phoneNumber || "",
+				identityDoc: customer.identityDoc || "",
+				email: customer.email || "",
+				phoneNumber: customer.phoneNumber || customer.identityDoc || "",
 				isFromDropdown: true,
 				selectedCustomerId: customer.id,
 			};
@@ -156,6 +155,7 @@ const BookingAddPage = () => {
 			newErrors.trip = "Please select a trip";
 		}
 
+		// Booking always belongs to a customer (payer)
 		if (!selectedCustomer) {
 			newErrors.customer = "Please select a customer";
 		}
@@ -164,11 +164,13 @@ const BookingAddPage = () => {
 			if (!traveler.fullName.trim()) {
 				newErrors[`traveler_${index}_name`] = "Please enter full name";
 			}
-			if (!traveler.dateOfBirth) {
-				newErrors[`traveler_${index}_dob`] = "Please enter date of birth";
+			if (!traveler.email?.trim()) {
+				newErrors[`traveler_${index}_email`] = "Please enter email";
+			} else if (!/^\S+@\S+\.\S+$/.test(traveler.email.trim())) {
+				newErrors[`traveler_${index}_email`] = "Invalid email";
 			}
-			if (!traveler.identityDoc.trim()) {
-				newErrors[`traveler_${index}_doc`] = "Please enter ID/Passport";
+			if (!traveler.phoneNumber?.trim()) {
+				newErrors[`traveler_${index}_phone`] = "Please enter phone number";
 			}
 		});
 
@@ -193,9 +195,11 @@ const BookingAddPage = () => {
 				noChildren: 0,
 				travelers: travelers.map((t) => ({
 					fullName: t.fullName,
-					gender: t.gender,
-					dateOfBirth: t.dateOfBirth,
-					identityDoc: t.identityDoc,
+					gender: t.gender || null,
+					dateOfBirth: t.dateOfBirth ? t.dateOfBirth : null,
+					identityDoc: t.identityDoc || null,
+					email: t.email?.trim() || null,
+					phoneNumber: t.phoneNumber?.trim() || null,
 				})),
 			};
 
@@ -285,63 +289,34 @@ const BookingAddPage = () => {
 								<div className="customer-select-wrapper">
 									<button
 										type="button"
-										ref={customerBtnRef}
 										className={`customer-select-btn ${showCustomerDropdown ? "open" : ""}`}
-										onClick={() => {
-											if (showCustomerDropdown) {
-												setShowCustomerDropdown(false);
-												setCustomerDropdownStyle(null);
-											} else {
-												const rect = customerBtnRef.current.getBoundingClientRect();
-												setCustomerDropdownStyle({
-													left: rect.left + window.scrollX,
-													top: rect.bottom + window.scrollY,
-													width: rect.width,
-												});
-												setShowCustomerDropdown(true);
-											}
-										}}
+										onClick={() => setShowCustomerDropdown(!showCustomerDropdown)}
 									>
 										<span>{selectedCustomer?.fullName || "Full Name"}</span>
 										<svg viewBox="0 0 24 24" fill="none">
 											<path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
 										</svg>
 									</button>
+									{showCustomerDropdown && (
+										<div className="customer-dropdown">
+											{loadingCustomers ? (
+												<div className="customer-dropdown-item">Loading...</div>
+											) : customers.length === 0 ? (
+												<div className="customer-dropdown-item">No customers found</div>
+											) : (
+												customers.map((customer) => (
+													<div
+														key={customer.id}
+														className={`customer-dropdown-item ${selectedCustomer?.id === customer.id ? "selected" : ""}`}
+														onClick={() => handleCustomerSelect(customer)}
+													>
+														{customer.fullName}
+													</div>
+												))
+											)}
+										</div>
+									)}
 								</div>
-
-								{showCustomerDropdown && customerDropdownStyle && createPortal(
-									<div
-										className="customer-dropdown portal"
-										style={{
-											position: "absolute",
-											left: customerDropdownStyle.left + "px",
-											top: customerDropdownStyle.top + "px",
-											width: customerDropdownStyle.width + "px",
-											zIndex: 1000,
-										}}
-									>
-										{loadingCustomers ? (
-											<div className="customer-dropdown-item">Loading...</div>
-										) : customers.length === 0 ? (
-											<div className="customer-dropdown-item">No customers found</div>
-										) : (
-											customers.map((customer) => (
-												<div
-													key={customer.id}
-													className={`customer-dropdown-item ${selectedCustomer?.id === customer.id ? "selected" : ""}`}
-													onClick={() => {
-													handleCustomerSelect(customer);
-													setShowCustomerDropdown(false);
-													setCustomerDropdownStyle(null);
-												}}
-												>
-													{customer.fullName}
-												</div>
-											))
-										)}
-									</div>,
-									document.body
-								)}
 								{errors.customer && <span className="error-text">{errors.customer}</span>}
 							</div>
 
@@ -473,26 +448,28 @@ const BookingAddPage = () => {
 										<input
 											type="email"
 											placeholder="Example@gmail.com"
-											value={
-												traveler.isFromDropdown ? customers.find((c) => c.id === traveler.selectedCustomerId)?.email || "" : ""
-											}
+											value={traveler.email || ""}
+											onChange={(e) => handleTravelerChange(index, "email", e.target.value)}
 											readOnly={traveler.isFromDropdown}
 										/>
+										{errors[`traveler_${index}_email`] && (
+											<span className="error-text">{errors[`traveler_${index}_email`]}</span>
+										)}
 									</div>
 
 									{/* Phone */}
 									<div className="booking-form-group">
-										<label>
-											Phone Number <span className="required">*</span>
-										</label>
+										<label>Phone Number</label>
 										<input
 											type="text"
 											placeholder="Phone Number"
-											value={traveler.identityDoc}
-											onChange={(e) => handleTravelerChange(index, "identityDoc", e.target.value)}
+											value={traveler.phoneNumber || traveler.identityDoc || ""}
+											onChange={(e) => handleTravelerChange(index, "phoneNumber", e.target.value)}
 											readOnly={traveler.isFromDropdown}
 										/>
-										{errors[`traveler_${index}_doc`] && <span className="error-text">{errors[`traveler_${index}_doc`]}</span>}
+										{errors[`traveler_${index}_phone`] && (
+											<span className="error-text">{errors[`traveler_${index}_phone`]}</span>
+										)}
 									</div>
 								</div>
 							</div>

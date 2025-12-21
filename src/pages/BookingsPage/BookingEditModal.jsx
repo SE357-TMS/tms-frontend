@@ -48,9 +48,6 @@ const BookingEditModal = ({ booking, onClose, onSave }) => {
 			if (!traveler.dateOfBirth) {
 				newErrors[`traveler_${index}_dob`] = "Vui lòng nhập ngày sinh";
 			}
-			if (!traveler.identityDoc.trim()) {
-				newErrors[`traveler_${index}_doc`] = "Vui lòng nhập CMND/CCCD";
-			}
 		});
 
 		return newErrors;

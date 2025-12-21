@@ -87,9 +87,6 @@ const BookingEditPage = () => {
 			if (!traveler.dateOfBirth) {
 				newErrors[`traveler_${index}_dob`] = "Please enter date of birth";
 			}
-			if (!traveler.identityDoc.trim()) {
-				newErrors[`traveler_${index}_doc`] = "Please enter ID/Passport";
-			}
 		});
 
 		return newErrors;

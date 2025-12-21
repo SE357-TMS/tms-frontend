@@ -21,6 +21,8 @@ import InvoicesPage from '../pages/InvoicesPage/index.jsx';
 import InvoiceDetailPage from '../pages/InvoiceDetailPage/index.jsx';
 import AttractionsPage from '../pages/AttractionsPage/index.jsx';
 import StatisticsPage from '../pages/StatisticsPage/index.jsx';
+import TripDetailPage from '../pages/TripDetailPage/index.jsx';
+import TripAddPage from '../pages/TripAddPage/index.jsx';
 import CustomerRouteDetailPage from '../pages/customer/RouteDetailPage/index.jsx';
 import SearchResultsPage from '../pages/customer/SearchResultsPage/SearchResultsPage';
 import CartPage from '../pages/customer/CartPage/index.jsx';
@@ -31,7 +33,6 @@ import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../hooks/useAuth';
 
-// Định nghĩa routes
 const LoadingScreen = () => (
   <div style={{
     display: 'flex',
@@ -167,6 +168,14 @@ export const router = createBrowserRouter([
       {
         path: '/trips',
         element: <TripsPage />,
+      },
+      {
+        path: '/trips/new',
+        element: <TripAddPage />,
+      },
+      {
+        path: '/trips/:id',
+        element: <TripDetailPage />,
       },
       {
         path: '/bookings',

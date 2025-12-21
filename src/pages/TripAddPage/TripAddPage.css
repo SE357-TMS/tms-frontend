@@ -1,0 +1,104 @@
+/* Basic styles for Add Trip page following admin look */
+.trip-add-page {
+  padding: 40px 48px;
+  background: #ffffff;
+}
+.trip-add-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.trip-add-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.trip-add-title .add-icon {
+  width: 28px;
+  height: 28px;
+}
+.trip-add-title .title-text {
+  font-family: Poppins, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #4D40CA; /* brand primary */
+}
+.trip-add-sub {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 13px;
+}
+.trip-add-form {
+  max-width: 1120px;
+}
+.section {
+  margin-top: 28px;
+}
+.section-title {
+  color: #4275AF; /* brand secondary */
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.grid { display:grid; gap:20px; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.mt-20 { margin-top: 20px; }
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.label {
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333333;
+}
+input[type="text"], input[type="date"], input[type="time"], input, select {
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #111827;
+}
+.input-with-button { display:flex; gap:12px; align-items:center; }
+.section-head { display:flex; justify-content:space-between; align-items:center; }
+.btn-choose {
+  background: #fff;
+  border: 1px solid #4D40CA;
+  color: #4D40CA;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 48px;
+}
+.confirm {
+  background: rgba(15,191,0,0.08);
+  border: 0.5px solid #0FBF00;
+  color: #0FBF00;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.cancel {
+  background: rgba(195,65,65,0.08);
+  border: 0.5px solid #C34141;
+  color: #C34141;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Make inputs visually lighter with placeholder-like secondary text */
+input::placeholder { color: #bdbdbd; }
+

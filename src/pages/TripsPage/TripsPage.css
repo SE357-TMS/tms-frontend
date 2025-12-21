@@ -1,25 +1,113 @@
+/* Trips Page styles - aligned with Bookings/Invoices visual language */
 .trips-page {
   padding: 20px;
 }
 
-.page-placeholder {
+/* Top controls: search + add button */
+.trips-row-1 {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  min-height: 400px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.trips-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.trips-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: white;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  min-width: 300px;
+}
+
+.trips-search input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  color: var(--text-primary, #1f2937);
+}
+
+/* Use booking page add button styles (.btn-add-booking) for consistent look */
+
+/* Table wrapper */
+.trips-table-wrapper {
   background: white;
   border-radius: 12px;
-  border: 2px dashed var(--border-color, #e5e7eb);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
-.page-placeholder h2 {
-  font-size: 24px;
-  color: var(--text-primary, #1f2937);
-  margin-bottom: 8px;
+.trips-table-container {
+  overflow-x: auto;
 }
 
-.page-placeholder p {
-  font-size: 16px;
+.trips-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px; /* keep columns visible */
+}
+
+.trips-table thead {
+  background: var(--bg-secondary, #fafafa);
+}
+
+.trips-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-secondary, #6b7280);
+  white-space: nowrap;
 }
+
+.trips-table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--text-primary, #1f2937);
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  vertical-align: middle;
+}
+
+.trips-table tbody tr:hover { background: var(--bg-hover, #f9fafb); }
+
+/* Column-specific cells */
+.trip-info { display:flex; flex-direction:column; gap:4px; }
+.trip-name { font-weight:600; color:var(--text-primary,#1f2937); }
+.trip-sub { font-size:12px; color:var(--text-secondary,#6b7280); }
+
+.trip-departure, .trip-pickup, .trip-booked { text-align:center; }
+
+.status-badge { display:inline-flex; align-items:center; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+.status-badge.waiting { background: rgba(245,216,111,0.12); color: #F5D86F; }
+.status-badge.completed { background: rgba(111,198,161,0.12); color: #6FC6A1; }
+.status-badge.cancelled { background: rgba(239,68,68,0.08); color:#dc2626; }
+
+.trip-price { font-weight:700; color:var(--text-primary,#1f2937); }
+
+.action-buttons { display:flex; gap:8px; justify-content:center; }
+.action-btn { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; border:none; cursor:pointer; }
+/* leave .btn-view/.btn-edit/.btn-cancel-booking styling to shared bookings CSS for consistency */
+
+/* Pagination area */
+.trips-pagination-wrapper { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid var(--border-color,#e5e7eb); }
+.trips-pagination { display:flex; gap:6px; }
+.pagination-btn { padding:6px 10px; border:1px solid var(--border-color,#e5e7eb); background:white; border-radius:6px; cursor:pointer; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .trips-search { min-width: 100%; }
+  .btn-add-trip { width:100%; justify-content:center; }
+}
+

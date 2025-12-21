@@ -18,6 +18,7 @@ import BookingDetailPage from '../pages/BookingDetailPage/index.jsx';
 import BookingAddPage from '../pages/BookingAddPage/index.jsx';
 import BookingEditPage from '../pages/BookingEditPage/index.jsx';
 import InvoicesPage from '../pages/InvoicesPage/index.jsx';
+import InvoiceDetailPage from '../pages/InvoiceDetailPage/index.jsx';
 import AttractionsPage from '../pages/AttractionsPage/index.jsx';
 import StatisticsPage from '../pages/StatisticsPage/index.jsx';
 import CustomerRouteDetailPage from '../pages/customer/RouteDetailPage/index.jsx';
@@ -186,6 +187,10 @@ export const router = createBrowserRouter([
       {
         path: '/invoices',
         element: <InvoicesPage />,
+      },
+      {
+        path: '/invoices/:id',
+        element: <InvoiceDetailPage />,
       },
       {
         path: '/attractions',

@@ -298,12 +298,12 @@ const BookingsPage = () => {
 					<table className="bookings-table">
 						<thead>
 							<tr>
-								<th>Tour</th>
 								<th>Customer</th>
-								<th>Guests</th>
 								<th>Total Price</th>
-								<th>Status</th>
+								<th>Tour</th>
 								<th>Booking Date</th>
+								<th>Guests</th>
+								<th>Status</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
@@ -331,6 +331,19 @@ const BookingsPage = () => {
 								bookingsList.map((booking) => (
 									<tr key={booking.id}>
 										<td>
+											<div className="customer-info">
+												<span className="customer-name">
+													{booking.userName || "N/A"}
+												</span>
+												<span className="customer-email">
+													{booking.userEmail || "N/A"}
+												</span>
+											</div>
+										</td>
+										<td className="booking-price">
+											{formatPrice(booking.totalPrice)}
+										</td>
+										<td>
 											<div className="booking-info">
 												<span className="booking-route">
 													{booking.routeName || "N/A"}
@@ -341,20 +354,8 @@ const BookingsPage = () => {
 												</span>
 											</div>
 										</td>
-										<td>
-											<div className="customer-info">
-												<span className="customer-name">
-													{booking.userName || "N/A"}
-												</span>
-												<span className="customer-email">
-													{booking.userEmail || "N/A"}
-												</span>
-											</div>
-										</td>
+										<td>{formatDate(booking.createdAt)}</td>
 										<td>{booking.seatsBooked || 0}</td>
-										<td className="booking-price">
-											{formatPrice(booking.totalPrice)}
-										</td>
 										<td>
 											<span
 												className={`status-badge ${getStatusClass(
@@ -364,7 +365,6 @@ const BookingsPage = () => {
 												{getStatusText(booking.status)}
 											</span>
 										</td>
-										<td>{formatDate(booking.createdAt)}</td>
 										<td>
 											<div className="action-buttons">
 												<button

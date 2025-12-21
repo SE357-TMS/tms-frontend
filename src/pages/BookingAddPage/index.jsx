@@ -397,9 +397,7 @@ const BookingAddPage = () => {
 								<div className="traveler-row">
 									{/* Name with dropdown */}
 									<div className="booking-form-group name-field">
-										<label>
-											Full Name: <span className="required">*</span>
-										</label>
+										<label className="label-required">Full Name:</label>
 										<div className="traveler-select-wrapper">
 											<button
 												type="button"
@@ -442,9 +440,7 @@ const BookingAddPage = () => {
 
 									{/* Email */}
 									<div className="booking-form-group">
-										<label>
-											Email <span className="required">*</span>
-										</label>
+										<label className="label-required">Email</label>
 										<input
 											type="email"
 											placeholder="Example@gmail.com"
@@ -458,7 +454,7 @@ const BookingAddPage = () => {
 									</div>
 
 									{/* Phone */}
-									<div className="booking-form-group">
+									<div className="booking-form-group phone-field">
 										<label>Phone Number</label>
 										<input
 											type="text"

@@ -6,6 +6,7 @@ import viewIcon from '../../assets/icons/view.svg';
 import addNewIcon from '../../assets/icons/addnew.svg';
 import searchIcon from '../../assets/icons/searchicon.svg';
 import EditTripModal from './EditTripModal';
+import EditPassengerModal from '../BookingDetailPage/EditPassengerModal';
 import tripService from '../../services/tripService';
 import api from '../../lib/httpHandler';
 
@@ -21,6 +22,10 @@ const TripDetailPage = () => {
   const [bookings, setBookings] = useState([]);
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [modalTraveler, setModalTraveler] = useState(null);
+  const [modalBookingId, setModalBookingId] = useState(null);
+  const [modalTravelerIndex, setModalTravelerIndex] = useState(null);
 
   useEffect(() => {
     const fetchTrip = async () => {
@@ -44,60 +49,72 @@ const TripDetailPage = () => {
   }, [id]);
 
   // Fetch bookings for this trip
-  useEffect(() => {
-    const fetchBookings = async () => {
-      if (!id) return;
-      
-      setLoadingBookings(true);
-      try {
-        const response = await api.get('/api/v1/tour-bookings', {
-          params: { tripId: id, pageSize: 100 }
-        });
-        const bookingsData = response.data?.data?.items || response.data?.data?.content || [];
-        setBookings(bookingsData);
-      } catch (err) {
-        console.error('Error fetching bookings:', err);
-      } finally {
-        setLoadingBookings(false);
-      }
-    };
+  const fetchBookings = async () => {
+    if (!id) return;
+    
+    setLoadingBookings(true);
+    try {
+      const response = await api.get('/api/v1/tour-bookings', {
+        params: { tripId: id, pageSize: 100 }
+      });
+      const bookingsData = response.data?.data?.items || response.data?.data?.content || [];
+      setBookings(bookingsData);
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+    } finally {
+      setLoadingBookings(false);
+    }
+  };
 
+  useEffect(() => {
     fetchBookings();
   }, [id]);
 
-  // Delete booking handler
-  const handleDeleteBooking = async (bookingId) => {
+  // Fetch trip data
+  const fetchTrip = async () => {
+    if (!id) return;
+    try {
+      const response = await api.get(`/api/v1/trips/${id}`);
+      setTrip(response.data.data);
+    } catch (err) {
+      console.error('Error fetching trip:', err);
+      setError('Failed to load trip details');
+    }
+  };
+
+  // Delete traveler handler
+  const handleDeleteTraveler = async (bookingId, travelerId, travelerName) => {
     const result = await Swal.fire({
-      title: 'Delete Booking?',
-      text: 'Are you sure you want to delete this booking? This action cannot be undone.',
+      title: 'Remove Traveler?',
+      html: `Are you sure you want to remove <strong>${travelerName}</strong> from this booking?<br><small>Note: Cannot remove within 3 days of departure if booking is paid.</small>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#dc2626',
       cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: 'Yes, remove',
       cancelButtonText: 'Cancel'
     });
 
     if (result.isConfirmed) {
       try {
-        await api.delete(`/api/v1/tour-bookings/${bookingId}`);
+        await api.delete(`/api/v1/tour-bookings/${bookingId}/travelers/${travelerId}`);
         
-        // Remove from local state
-        setBookings(prev => prev.filter(b => b.id !== bookingId));
+        // Refresh both trip and bookings data
+        await Promise.all([fetchTrip(), fetchBookings()]);
         
         Swal.fire({
           icon: 'success',
-          title: 'Deleted!',
-          text: 'Booking has been deleted.',
+          title: 'Removed!',
+          text: 'Traveler has been removed successfully.',
           timer: 1500,
           showConfirmButton: false
         });
       } catch (err) {
-        console.error('Error deleting booking:', err);
+        console.error('Error removing traveler:', err);
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: err.response?.data?.message || 'Failed to delete booking'
+          text: err.response?.data?.message || 'Failed to remove traveler'
         });
       }
     }
@@ -285,10 +302,11 @@ const TripDetailPage = () => {
               ) : (() => {
                 // Flatten bookings to show each traveler as a row
                 const travelers = bookings.flatMap(booking => 
-                  (booking.travelers || []).map(traveler => ({
+                  (booking.travelers || []).map((traveler, idx) => ({
                     ...traveler,
                     bookingId: booking.id,
-                    bookingCreatedAt: booking.createdAt
+                    bookingCreatedAt: booking.createdAt,
+                    travelerIndex: idx
                   }))
                 );
                 
@@ -320,7 +338,12 @@ const TripDetailPage = () => {
                         <div className="action-buttons">
                           <button
                             className="btn-edit"
-                            onClick={() => navigate(`/bookings/${traveler.bookingId}/edit`)}
+                            onClick={() => {
+                              setModalTraveler(traveler);
+                              setModalBookingId(traveler.bookingId);
+                              setModalTravelerIndex(traveler.travelerIndex);
+                              setShowEditModal(true);
+                            }}
                             title="Edit"
                           >
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -328,12 +351,12 @@ const TripDetailPage = () => {
                             </svg>
                           </button>
                           <button
-                            className="btn-delete"
-                            onClick={() => handleDeleteBooking(traveler.bookingId)}
+                            className="btn-cancel-booking"
+                            onClick={() => handleDeleteTraveler(traveler.bookingId, traveler.id, traveler.fullName)}
                             title="Delete"
                           >
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                              <path d="M2.25 4.5H15.75M6.75 4.5V3C6.75 2.17157 7.42157 1.5 8.25 1.5H9.75C10.5784 1.5 11.25 2.17157 11.25 3V4.5M14.25 4.5V15C14.25 15.8284 13.5784 16.5 12.75 16.5H5.25C4.42157 16.5 3.75 15.8284 3.75 15V4.5H14.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </button>
                         </div>
@@ -346,6 +369,18 @@ const TripDetailPage = () => {
           </table>
         </div>
       </div>
+      {showEditModal && (
+        <EditPassengerModal
+          traveler={modalTraveler}
+          bookingId={modalBookingId}
+          travelerIndex={modalTravelerIndex}
+          onClose={() => setShowEditModal(false)}
+          onSave={() => {
+            setShowEditModal(false);
+            fetchBookings();
+          }}
+        />
+      )}
     </div>
   );
 };

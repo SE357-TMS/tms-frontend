@@ -267,7 +267,7 @@ const InvoiceDetailPage = () => {
 				</div>
 
 				{/* Payment Method Card */}
-				{!isPaid && !isRefunded && (
+				{!isPaid && !isRefunded && booking?.status !== 'CANCELED' && (
 					<div className="info-card">
 						<h3 className="card-title">Choose payment method</h3>
 						<div className="payment-methods">
@@ -326,6 +326,16 @@ const InvoiceDetailPage = () => {
 								Payment confirmation
 							</button>
 						</div>
+					</div>
+				)}
+
+				{/* Show message for canceled bookings */}
+				{!isPaid && !isRefunded && booking?.status === 'CANCELED' && (
+					<div className="info-card">
+						<h3 className="card-title">Payment Unavailable</h3>
+						<p style={{ color: '#6b7280', textAlign: 'center', padding: '20px' }}>
+							This booking has been canceled. Payment is not available for canceled bookings.
+						</p>
 					</div>
 				)}
 

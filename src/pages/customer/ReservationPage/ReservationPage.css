@@ -480,3 +480,102 @@
     padding: 0 12px;
   }
 }
+
+/* ============================================
+   PAGINATION STYLES
+   ============================================ */
+
+.reservation-page .reservation-pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 0;
+  margin-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.reservation-page .pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.reservation-page .pagination-total {
+  color: #9ca3af;
+  margin-left: 8px;
+}
+
+.reservation-page .page-size-select {
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1f2937;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.reservation-page .page-size-select:focus {
+  border-color: #4D40CA;
+  box-shadow: 0 0 0 2px rgba(77, 64, 202, 0.1);
+}
+
+.reservation-page .reservation-pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reservation-page .pagination-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #1f2937;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reservation-page .pagination-btn:hover:not(:disabled) {
+  border-color: #4D40CA;
+  color: #4D40CA;
+}
+
+.reservation-page .pagination-btn.active {
+  background: #4D40CA;
+  color: white;
+  border-color: #4D40CA;
+}
+
+.reservation-page .pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pagination Responsive */
+@media (max-width: 768px) {
+  .reservation-page .reservation-pagination-wrapper {
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .reservation-page .pagination-info {
+    order: 2;
+  }
+
+  .reservation-page .reservation-pagination {
+    order: 1;
+  }
+}

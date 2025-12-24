@@ -71,6 +71,10 @@ export default function ReservationPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
 
   // Fetch bookings
   useEffect(() => {
@@ -98,13 +102,22 @@ export default function ReservationPage() {
   };
 
   // Filter by search
-  // Show all bookings except PENDING ones without payment status (incomplete bookings still in cart)
+  // Hide temporary bookings (created from cart but not yet confirmed/ready for payment)
+  // A temporary booking is a PENDING booking that:
+  // - displayStatus is NOT 'PAYMENT' (not ready for payment)
+  // - OR travelerCount < seatsBooked (travelers not fully added)
   const visibleBookings = useMemo(() => {
     return bookings.filter((b) => {
-      // Show all non-PENDING bookings (CONFIRMED, COMPLETED, CANCELED)
+      // Always show non-PENDING bookings (CONFIRMED, COMPLETED, CANCELED)
       if (b.bookingStatus !== "PENDING") return true;
-      // For PENDING bookings, only show those ready for payment (displayStatus: PAYMENT)
-      return b.displayStatus === "PAYMENT";
+      
+      // For PENDING bookings, hide temporary ones:
+      // - Must have displayStatus === 'PAYMENT' (ready for payment)
+      // - Must have enough travelers (travelerCount >= seatsBooked)
+      const hasEnoughTravelers = (b.travelerCount ?? 0) >= (b.seatsBooked ?? 1);
+      const isReadyForPayment = b.displayStatus === "PAYMENT";
+      
+      return isReadyForPayment && hasEnoughTravelers;
     });
   }, [bookings]);
 
@@ -118,6 +131,31 @@ export default function ReservationPage() {
         b.routeName?.toLowerCase().includes(query)
     );
   }, [visibleBookings, searchQuery]);
+
+  // Pagination calculations
+  const totalItems = filteredBookings.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const paginatedBookings = useMemo(() => {
+    const startIndex = currentPage * pageSize;
+    return filteredBookings.slice(startIndex, startIndex + pageSize);
+  }, [filteredBookings, currentPage, pageSize]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery, statusFilter, pageSize]);
+
+  // Pagination handlers
+  const goToPage = (page) => {
+    if (page >= 0 && page < totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+    setCurrentPage(0);
+  };
 
   // Handle payment click
   const handlePaymentClick = (booking) => {
@@ -229,7 +267,7 @@ export default function ReservationPage() {
 
             {/* Reservation List */}
             <div className="reservation-list">
-              {filteredBookings.length === 0 ? (
+              {paginatedBookings.length === 0 ? (
                 <div className="empty-state">
                   <p>No reservations found</p>
                   <button className="btn-browse" onClick={() => navigate("/search")}>
@@ -237,7 +275,7 @@ export default function ReservationPage() {
                   </button>
                 </div>
               ) : (
-                filteredBookings.map((booking) => {
+                paginatedBookings.map((booking) => {
                   const statusConfig = getStatusConfig(booking);
                   const isDisabled = booking.disabled || booking.bookingStatus === "CANCELED";
                   const routeSubtitle = getRouteDescription(booking);
@@ -342,6 +380,81 @@ export default function ReservationPage() {
                 })
               )}
             </div>
+
+            {/* Pagination */}
+            {totalItems > 0 && (
+              <div className="reservation-pagination-wrapper">
+                <div className="pagination-info">
+                  <span>Show</span>
+                  <select value={pageSize} onChange={handlePageSizeChange} className="page-size-select">
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={15}>15</option>
+                    <option value={20}>20</option>
+                  </select>
+                  <span>results</span>
+                  <span className="pagination-total">({totalItems} total)</span>
+                </div>
+                
+                <div className="reservation-pagination">
+                  <button 
+                    onClick={() => goToPage(0)}
+                    disabled={currentPage === 0 || totalPages === 0}
+                    className="pagination-btn"
+                  >
+                    «
+                  </button>
+                  <button 
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 0 || totalPages === 0}
+                    className="pagination-btn"
+                  >
+                    ‹
+                  </button>
+                  
+                  {totalPages > 0 ? (
+                    [...Array(Math.min(totalPages, 5))].map((_, index) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = index;
+                      } else if (currentPage < 3) {
+                        pageNum = index;
+                      } else if (currentPage > totalPages - 4) {
+                        pageNum = totalPages - 5 + index;
+                      } else {
+                        pageNum = currentPage - 2 + index;
+                      }
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => goToPage(pageNum)}
+                          className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
+                        >
+                          {pageNum + 1}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <button className="pagination-btn active">1</button>
+                  )}
+                  
+                  <button 
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages - 1 || totalPages === 0}
+                    className="pagination-btn"
+                  >
+                    ›
+                  </button>
+                  <button 
+                    onClick={() => goToPage(totalPages - 1)}
+                    disabled={currentPage === totalPages - 1 || totalPages === 0}
+                    className="pagination-btn"
+                  >
+                    »
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </div>

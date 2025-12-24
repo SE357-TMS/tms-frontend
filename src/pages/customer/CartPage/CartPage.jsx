@@ -15,6 +15,9 @@ import CalendarIcon from "../../../assets/icons/calendardate.svg";
 import AddPersonIcon from "../../../assets/icons/addperson.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
 
+// Page size options
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
 // Helper functions
 const formatPrice = (price) => {
   if (!price) return "0";
@@ -46,6 +49,10 @@ export default function CartPage() {
   const [updatingItems, setUpdatingItems] = useState(new Set());
   const [creatingBookingItem, setCreatingBookingItem] = useState(null);
   const [confirmingBookings, setConfirmingBookings] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   // Fetch cart data
   useEffect(() => {
@@ -84,6 +91,48 @@ export default function CartPage() {
       .filter((item) => selectedItems.has(item.id))
       .reduce((sum, item) => sum + item.quantity, 0);
   }, [cartItems, selectedItems]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(cartItems.length / pageSize);
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return cartItems.slice(start, start + pageSize);
+  }, [cartItems, currentPage, pageSize]);
+
+  // Reset to first page when cart items change significantly
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  // Pagination handlers
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+  // Generate pagination numbers
+  const getPaginationNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
 
   // Handle select all
   const handleSelectAll = (e) => {
@@ -489,8 +538,28 @@ export default function CartPage() {
                 </button>
               </div>
             ) : (
-              <div className="cart-items-list">
-                {cartItems.map((item) => (
+              <>
+                {/* Page size selector and info */}
+                <div className="cart-pagination-info">
+                  <div className="page-size-selector">
+                    <span>Show</span>
+                    <select value={pageSize} onChange={handlePageSizeChange}>
+                      {PAGE_SIZE_OPTIONS.map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    <span>items per page</span>
+                  </div>
+                  <div className="results-info">
+                    Showing {(currentPage - 1) * pageSize + 1} -{" "}
+                    {Math.min(currentPage * pageSize, cartItems.length)} of {cartItems.length} items
+                  </div>
+                </div>
+
+                <div className="cart-items-list">
+                  {paginatedItems.map((item) => (
                   <article
                     key={item.id}
                     className={`cart-item ${item.isExpired ? "expired" : ""}`}
@@ -630,7 +699,37 @@ export default function CartPage() {
                     </div>
                   </article>
                 ))}
-              </div>
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="cart-pagination-wrapper">
+                    <button
+                      className="pagination-btn"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      ←
+                    </button>
+                    {getPaginationNumbers().map((page) => (
+                      <button
+                        key={page}
+                        className={`pagination-btn ${currentPage === page ? "active" : ""}`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button
+                      className="pagination-btn"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </section>
         </div>

@@ -38,7 +38,9 @@ const DURATION_OPTIONS = [
   { label: "7N6Đ+", value: 7 },
 ];
 
-const PAGE_SIZE = 5;
+const DEFAULT_PAGE_SIZE = 5;
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
 const DEFAULT_FILTERS = {
   keyword: "",
   startLocation: "",
@@ -102,6 +104,7 @@ export default function SearchResultsPage() {
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   // Tour date indexes for slider
   const [tourDateIndexes, setTourDateIndexes] = useState({});
@@ -165,11 +168,11 @@ export default function SearchResultsPage() {
 
   // Paginate filtered tours
   const paginatedTours = useMemo(() => {
-    const startIndex = currentPage * PAGE_SIZE;
-    return filteredAndSortedTours.slice(startIndex, startIndex + PAGE_SIZE);
-  }, [filteredAndSortedTours, currentPage]);
+    const startIndex = currentPage * pageSize;
+    return filteredAndSortedTours.slice(startIndex, startIndex + pageSize);
+  }, [filteredAndSortedTours, currentPage, pageSize]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredAndSortedTours.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filteredAndSortedTours.length / pageSize));
 
   // Update URL params when filters change
   useEffect(() => {
@@ -259,6 +262,11 @@ export default function SearchResultsPage() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePageSizeChange = (e) => {
+    setPageSize(Number(e.target.value));
+    setCurrentPage(0);
   };
 
   // Generate pagination numbers
@@ -403,6 +411,27 @@ export default function SearchResultsPage() {
                 </div>
               </div>
             </div>
+
+            {/* Pagination Info */}
+            {filteredAndSortedTours.length > 0 && (
+              <div className="search-pagination-info">
+                <div className="page-size-selector">
+                  <span>Show</span>
+                  <select value={pageSize} onChange={handlePageSizeChange}>
+                    {PAGE_SIZE_OPTIONS.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                  <span>tours per page</span>
+                </div>
+                <div className="results-info">
+                  Showing {currentPage * pageSize + 1} -{" "}
+                  {Math.min((currentPage + 1) * pageSize, filteredAndSortedTours.length)} of {filteredAndSortedTours.length} tours
+                </div>
+              </div>
+            )}
 
           {/* Tour List */}
           {loading ? (

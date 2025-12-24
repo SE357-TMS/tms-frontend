@@ -122,9 +122,32 @@ export default function ReservationPage() {
   }, [bookings]);
 
   const filteredBookings = useMemo(() => {
-    if (!searchQuery) return visibleBookings;
+    let filtered = visibleBookings;
+    
+    // Apply status filter (frontend filtering for cancelled items when unpaid is selected)
+    if (statusFilter === "unpaid") {
+      // When filtering unpaid, exclude cancelled/disabled bookings
+      filtered = filtered.filter((b) => {
+        const isCancelled = b.displayStatus === "CANCELLED" || 
+                           b.displayStatus === "REFUNDED" || 
+                           b.displayStatus === "PAYMENT_OVERDUE" ||
+                           b.bookingStatus === "CANCELED" ||
+                           b.disabled;
+        return !isCancelled;
+      });
+    } else if (statusFilter === "cancelled") {
+      // When filtering cancelled, show only cancelled/refunded bookings
+      filtered = filtered.filter((b) => {
+        return b.displayStatus === "CANCELLED" || 
+               b.displayStatus === "REFUNDED" || 
+               b.bookingStatus === "CANCELED";
+      });
+    }
+    
+    // Apply search query
+    if (!searchQuery) return filtered;
     const query = searchQuery.toLowerCase();
-    return visibleBookings.filter(
+    return filtered.filter(
       (b) =>
         b.bookingCode?.toLowerCase().includes(query) ||
         b.routeCode?.toLowerCase().includes(query) ||
@@ -258,6 +281,7 @@ export default function ReservationPage() {
                   <option value="all">All</option>
                   <option value="paid">Paid</option>
                   <option value="unpaid">Unpaid</option>
+                  <option value="cancelled">Cancelled</option>
                 </select>
                 <svg className="select-icon" viewBox="0 0 24 24" fill="none">
                   <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

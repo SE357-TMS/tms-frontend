@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { AdminTitleContext } from '../../layouts/adminLayout/AdminLayout/AdminTitleContext';
 import './TripsPage.css';
 import viewIcon from '../../assets/icons/view.svg';
@@ -28,6 +29,90 @@ const TripsPage = () => {
 
   const filteredQuery = query; // keep variable name for clarity
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // Handler for canceling a trip
+  const handleCancelTrip = async (tripId, tripName, bookedSeats) => {
+    // Build confirmation message with HTML
+    let htmlMessage = `<div style="text-align: left;">`;
+    htmlMessage += `<p style="margin-bottom: 15px;">This will:</p>`;
+    htmlMessage += `<ul style="margin: 0; padding-left: 20px;">`;
+    htmlMessage += `<li>Change the trip status to <strong>CANCELED</strong></li>`;
+    
+    if (bookedSeats > 0) {
+      htmlMessage += `<li>Automatically cancel all <strong>${bookedSeats}</strong> active bookings</li>`;
+      htmlMessage += `<li>Trigger refund process for affected customers</li>`;
+      htmlMessage += `<li>Send notification emails to customers</li>`;
+    }
+    
+    htmlMessage += `</ul>`;
+    htmlMessage += `<p style="margin-top: 15px; color: #dc2626; font-weight: 500;">⚠️ This action cannot be easily undone.</p>`;
+    htmlMessage += `</div>`;
+    
+    const result = await Swal.fire({
+      title: `Cancel "${tripName}"?`,
+      html: htmlMessage,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, cancel trip',
+      cancelButtonText: 'No, keep it',
+      width: '600px',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      const response = await tripService.cancelTrip(tripId);
+      
+      // Refresh the trips list
+      const params = { 
+        page: currentPage, 
+        pageSize: itemsPerPage 
+      };
+      if (statusFilter) params.status = statusFilter;
+      const refreshResponse = await tripService.getTrips(params);
+      const payload = refreshResponse.data?.data || {};
+      let items = payload.items || payload.content || [];
+      let total = payload.totalElements || payload.total || items.length;
+      
+      if (filteredQuery) {
+        items = items.filter(trip => 
+          trip.routeName?.toLowerCase().includes(filteredQuery.toLowerCase()) ||
+          trip.startLocation?.toLowerCase().includes(filteredQuery.toLowerCase()) ||
+          trip.endLocation?.toLowerCase().includes(filteredQuery.toLowerCase())
+        );
+        total = items.length;
+      }
+      
+      setTrips(items);
+      setTotalItems(total);
+      
+      // Show success message
+      let successHtml = '<p>Trip has been canceled successfully!</p>';
+      if (bookedSeats > 0) {
+        successHtml += `<p style="margin-top: 10px; color: #059669;"><strong>${bookedSeats}</strong> booking(s) have been automatically canceled.</p>`;
+      }
+      
+      await Swal.fire({
+        icon: 'success',
+        title: 'Canceled!',
+        html: successHtml,
+        confirmButtonColor: '#4D40CA',
+      });
+    } catch (err) {
+      console.error('Error canceling trip:', err);
+      const errorMessage = err.response?.data?.message || 'Failed to cancel trip';
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+        confirmButtonColor: '#4D40CA',
+      });
+    }
+  };
 
   // Helper functions for formatting
   const formatDate = (dateString) => {
@@ -270,8 +355,9 @@ const TripsPage = () => {
                         </button>
                         <button
                           className="btn-cancel-booking"
-                          onClick={() => alert(`Delete ${trip.id}`)}
-                          title="Delete"
+                          onClick={() => handleCancelTrip(trip.id, trip.routeName, trip.bookedSeats)}
+                          title="Cancel Trip"
+                          disabled={trip.status === 'CANCELED' || trip.status === 'FINISHED'}
                         >
                           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                             <path d="M4.5 4.5L13.5 13.5M4.5 13.5L13.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -79,6 +79,15 @@ const tripService = {
 	deleteTrip: async (id) => {
 		return api.delete(`${BASE_PATH}/${id}`);
 	},
+
+	/**
+	 * Cancel a trip by changing its status to CANCELED
+	 * @param {string} id - Trip ID (UUID)
+	 * @returns {Promise} API response
+	 */
+	cancelTrip: async (id) => {
+		return api.put(`${BASE_PATH}/${id}/cancel`);
+	},
 };
 
 export default tripService;

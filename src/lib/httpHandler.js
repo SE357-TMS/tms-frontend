@@ -28,18 +28,45 @@ api.interceptors.request.use(
   }
 );
 
+// Danh sách các endpoint public không yêu cầu authentication
+const PUBLIC_ENDPOINTS = [
+  '/api/v1/routes',
+  '/api/v1/attractions',
+  '/api/v1/auth',
+];
+
+const isPublicEndpoint = (url) => {
+  return PUBLIC_ENDPOINTS.some((endpoint) => url?.includes(endpoint));
+};
+
 // Response interceptor để xử lý lỗi
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Nếu lỗi 401 và chưa thử refresh token
+    // Nếu lỗi 401 và chưa thử retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      // Nếu là public endpoint, retry không có token
+      if (isPublicEndpoint(originalRequest.url)) {
+        delete originalRequest.headers.Authorization;
+        return api(originalRequest);
+      }
+
+      // Chỉ thử refresh token nếu có token hiện tại
+      const currentToken = authService.getToken();
+      if (!currentToken) {
+        return Promise.reject(error);
+      }
+
       try {
         const refreshToken = authService.getRefreshToken();
+        if (!refreshToken) {
+          return Promise.reject(error);
+        }
+
         const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
           refreshToken,
         });
